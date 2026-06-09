@@ -14,12 +14,19 @@ Legend: ✅ done · 🚧 in progress · ⬜ planned
 - ✅ **Population synthesis core**: IPF, list-balancing/IPU, integerizer,
   synthesizer (`popsyn/`), with unit tests.
 
-## Phase 1 — Zones & inputs ⬜
-- ⬜ TIGER/Line ingestion → block-group geographies, PUMAs, centroids.
-- ⬜ `ZoneSystem`: default TAZs = Census block groups; land-use attributes.
-- ⬜ LODES (LEHD) employment by sector to each zone.
-- ⬜ Zone-level marginal controls assembled from ACS for popsyn.
-- ⬜ Wire popsyn to real SB County data end-to-end (online environment).
+## Phase 1 — Zones & inputs 🚧
+- ✅ `ingest` stage: ACS marginals + PUMS seed records via the Census client,
+  with a fixture fallback for offline runs.
+- ✅ Spec-driven controls: ACS detailed-table variables → per-zone marginals
+  (`marginals.py`); PUMS recodes → seed incidence (`seed.py`); default SB County
+  scheme (`specs.py`, draft — verify variable IDs against the live API).
+- ✅ `zones` stage: model zone table (block groups as TAZs) from ingested data.
+- ✅ Popsyn consumes ingested Census tables end-to-end (`from_census.py`);
+  infeasible controls (sparse-seed categories) are relaxed, not fatal.
+- ⬜ TIGER/Line ingestion → block-group geometries, PUMAs, centroids (geo extra).
+- ⬜ LODES (LEHD) employment by sector to each zone (size terms).
+- ⬜ Run against live SB County data in a network-enabled environment; validate
+  the default ACS/PUMS variable scheme for the configured vintage.
 
 ## Phase 2 — Networks & skims ⬜
 - ⬜ OSM → routable highway/bike/walk graph for the county (`osmnx`/`networkx`).

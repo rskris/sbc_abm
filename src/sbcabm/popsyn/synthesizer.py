@@ -137,6 +137,7 @@ def synthesize(
             targets,
             max_iterations=max_iterations,
             tolerance=tolerance,
+            relax_infeasible=True,
         )
 
         target_total: int | None = None
@@ -155,6 +156,7 @@ def synthesize(
                 "balance_iterations": result.iterations,
                 "balance_converged": result.converged,
                 "max_control_gap": result.max_gap,
+                "relaxed_controls": len(result.relaxed),
                 "synthesized_households": int(counts.sum()),
             }
         )

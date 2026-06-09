@@ -51,37 +51,43 @@ def integerize_weights(
     if target_total < 0:
         raise ValueError("target_total must be non-negative")
 
+    n = weights.size
+    if n == 0:
+        if target_total != 0:
+            raise ValueError("cannot reach a positive target with no weights")
+        return np.zeros(0, dtype=np.int64)
+
     floor = np.floor(weights).astype(np.int64)
+    fractional = weights - floor
+    result = floor.copy()
     remainder = int(target_total - floor.sum())
 
     if remainder == 0:
-        return floor
-    if remainder < 0:
-        # Too many from flooring (possible when target < sum of floors):
-        # remove units from the smallest fractional parts.
-        fractional = weights - floor
-        order = _stable_order(fractional, rng, ascending=True)
-        result = floor.copy()
-        for idx in order[: -remainder]:
-            if result[idx] > 0:
-                result[idx] -= 1
-        # If some chosen cells were already zero, top up from next-smallest.
-        deficit = int(target_total - result.sum())
-        i = -remainder
-        while deficit < 0 and i < len(order):
-            idx = order[i]
-            if result[idx] > 0:
-                result[idx] -= 1
-                deficit += 1
-            i += 1
         return result
 
-    # Positive remainder: add units to the largest fractional parts.
-    fractional = weights - floor
-    order = _stable_order(fractional, rng, ascending=False)
-    result = floor.copy()
-    for idx in order[:remainder]:
-        result[idx] += 1
+    if remainder > 0:
+        # Hand out `remainder` extra units to the largest fractional parts. If
+        # the target far exceeds the floor sum (sparse weights), give every cell
+        # an equal base share first, then allocate the leftover by remainder.
+        if remainder >= n:
+            base, remainder = divmod(remainder, n)
+            result += base
+        order = _stable_order(fractional, rng, ascending=False)
+        for idx in order[:remainder]:
+            result[idx] += 1
+        return result
+
+    # remainder < 0: remove `to_remove` units, preferring the smallest
+    # fractional parts, cycling so we only ever decrement cells above zero.
+    to_remove = -remainder
+    order = _stable_order(fractional, rng, ascending=True)
+    pos = 0
+    while to_remove > 0:
+        idx = order[pos % n]
+        if result[idx] > 0:
+            result[idx] -= 1
+            to_remove -= 1
+        pos += 1
     return result
 
 

@@ -16,9 +16,10 @@ The whole model is bootstrapped from **public data** (US Census/ACS & PUMS,
 LEHD/LODES, TIGER/Line, OpenStreetMap, GTFS) — see
 [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
 
-> **Status:** early development. The population-synthesis core is implemented and
-> tested; remaining pipeline stages are scaffolded with a documented roadmap.
-> See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Status:** early development. Data ingestion (Census ACS/PUMS), the zone
+> system, and the population-synthesis core (`ingest → zones → popsyn`) are
+> implemented and tested end-to-end; remaining pipeline stages are scaffolded
+> with a documented roadmap. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## What an ABM does
 
@@ -54,7 +55,10 @@ pytest
 
 # Inspect the configuration and pipeline stages
 sbcabm info
-sbcabm run --stages popsyn --config configs/settings.yaml
+
+# Run the implemented pipeline: ingest public data, build zones, synthesize
+# a population (falls back to bundled fixtures when offline).
+sbcabm run --stages ingest,zones,popsyn --config configs/settings.yaml
 ```
 
 > Live data ingestion (Census API, TIGER, OSM, GTFS) requires outbound network
@@ -70,9 +74,10 @@ src/sbcabm/
   config.py         typed configuration loader
   pipeline.py       stage registry + orchestrator
   cli.py            `sbcabm` command-line entry point
-  data/             public-data ingestion (census, geographies, sources)
-  zones/            zone system (TAZ / block-group)
-  popsyn/           population synthesis (IPF, list balancing, integerizer)
+  data/             public-data ingestion (census, sources, ingest stage)
+  zones/            zone system (TAZ / block-group) + zones stage
+  popsyn/           population synthesis: IPF, list balancing, integerizer,
+                    ACS→controls (marginals) + PUMS→seed (specs, seed, from_census)
   # forthcoming: longterm/ activitygen/ tours/ modechoice/ skims/ assignment/
 tests/              unit tests + fixtures
 ```

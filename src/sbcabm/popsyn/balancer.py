@@ -27,6 +27,7 @@ class BalanceResult:
     iterations: int
     converged: bool
     max_gap: float  # largest |weighted_sum - control| / control across controls
+    relaxed: tuple[int, ...] = ()  # controls dropped as infeasible (no seed support)
 
     def weighted_totals(self, incidence: np.ndarray) -> np.ndarray:
         return incidence.T @ self.weights
@@ -40,6 +41,7 @@ def balance_weights(
     max_iterations: int = 1000,
     tolerance: float = 1e-6,
     min_weight: float = 1e-9,
+    relax_infeasible: bool = False,
 ) -> BalanceResult:
     """Solve for seed-household weights matching marginal controls (IPU).
 
@@ -60,6 +62,11 @@ def balance_weights(
     min_weight:
         Weights are floored at this value to keep every seed reachable and avoid
         division/overflow issues.
+    relax_infeasible:
+        A control with a positive target but no contributing seed household is
+        impossible to satisfy (the seed lacks that category). When ``False`` this
+        raises; when ``True`` such controls are dropped from balancing and
+        reported in ``BalanceResult.relaxed`` so the rest can still be matched.
 
     Returns
     -------
@@ -93,15 +100,18 @@ def balance_weights(
 
     weights = np.maximum(weights, min_weight)
 
-    # Controls that no seed can contribute to are infeasible; flag rather than
-    # silently diverge. A zero control with zero incidence is fine (skipped).
+    # Controls that no seed can contribute to are infeasible: impossible to
+    # satisfy because the seed lacks that category. Either raise or relax them.
     contributable = incidence.sum(axis=0) > 0
     infeasible = (~contributable) & (controls > 0)
-    if np.any(infeasible):
-        bad = np.where(infeasible)[0].tolist()
+    relaxed = tuple(int(j) for j in np.where(infeasible)[0])
+    if relaxed and not relax_infeasible:
         raise ValueError(
-            f"controls {bad} are positive but no seed household contributes to them"
+            f"controls {list(relaxed)} are positive but no seed household "
+            "contributes to them (pass relax_infeasible=True to drop them)"
         )
+    # A control is "active" if it is feasible and has a positive target.
+    active = (~infeasible) & (controls > 0)
 
     converged = False
     max_gap = float("inf")
@@ -109,10 +119,9 @@ def balance_weights(
 
     for iteration in range(1, max_iterations + 1):
         for j in range(n_controls):
-            col = incidence[:, j]
-            if controls[j] == 0:
-                # Drive contributing households' weight toward the floor.
+            if not active[j]:
                 continue
+            col = incidence[:, j]
             weighted_sum = float(col @ weights)
             if weighted_sum <= 0:
                 continue
@@ -124,7 +133,7 @@ def balance_weights(
 
         totals = incidence.T @ weights
         with np.errstate(divide="ignore", invalid="ignore"):
-            rel = np.where(controls > 0, np.abs(totals - controls) / controls, 0.0)
+            rel = np.where(active, np.abs(totals - controls) / controls, 0.0)
         max_gap = float(rel.max()) if rel.size else 0.0
         if max_gap < tolerance:
             converged = True
@@ -135,4 +144,5 @@ def balance_weights(
         iterations=iteration,
         converged=converged,
         max_gap=max_gap,
+        relaxed=relaxed,
     )

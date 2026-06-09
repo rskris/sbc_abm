@@ -16,11 +16,13 @@ import pandas as pd
 
 from ..config import Config
 from ..pipeline import DataStore
+from .from_census import build_popsyn_inputs
 from .synthesizer import synthesize
 
 logger = logging.getLogger("sbcabm.popsyn")
 
 _REQUIRED = ("seed_households", "seed_persons", "incidence", "controls")
+_CENSUS_INPUTS = ("acs_block_groups", "pums_households", "pums_persons")
 _SEED_HH_ID = "seed_household_id"
 
 
@@ -65,9 +67,24 @@ def run_popsyn(config: Config, store: DataStore) -> None:
 
 
 def _ensure_inputs(config: Config, store: DataStore) -> None:
-    """Populate any missing input tables from bundled fixtures."""
+    """Ensure the four synthesizer inputs exist in the store.
+
+    Preference order: (1) already present; (2) build from ingested Census tables
+    (the real-data path from the ``ingest`` stage); (3) load popsyn fixtures.
+    """
     missing = [name for name in _REQUIRED if not store.has(name)]
     if not missing:
+        return
+
+    if all(store.has(name) for name in _CENSUS_INPUTS):
+        logger.info("building popsyn inputs from ingested Census tables")
+        inputs = build_popsyn_inputs(
+            store.get("acs_block_groups"),
+            store.get("pums_households"),
+            store.get("pums_persons"),
+        )
+        for name, table in inputs.items():
+            store.put(name, table)
         return
 
     fixtures = Path(config.paths.fixtures_dir) / "popsyn"

@@ -43,6 +43,28 @@ def test_target_below_floor_sum_removes_units():
     assert (counts >= 0).all()
 
 
+def test_target_far_above_floor_sum():
+    # Sparse weights (all < 1, floors all 0) but a large target → even base
+    # share plus largest-remainder leftover, summing exactly to target.
+    weights = np.array([0.5, 0.5, 0.5, 0.5])
+    counts = integerize_weights(weights, target_total=10)
+    assert counts.sum() == 10
+    assert (counts >= 0).all()
+    assert counts.max() - counts.min() <= 1  # spread evenly
+
+
+def test_target_far_below_floor_sum():
+    # Floors sum to 30; ask for 7 → must remove 23 units without going negative.
+    weights = np.array([10.1, 10.2, 10.3])
+    counts = integerize_weights(weights, target_total=7)
+    assert counts.sum() == 7
+    assert (counts >= 0).all()
+
+
+def test_empty_weights():
+    assert integerize_weights(np.array([]), target_total=0).tolist() == []
+
+
 def test_reproducible_with_seed():
     weights = np.array([0.5, 0.5, 0.5, 0.5, 0.5, 0.5])
     a = integerize_weights(weights, target_total=3, rng=np.random.default_rng(7))

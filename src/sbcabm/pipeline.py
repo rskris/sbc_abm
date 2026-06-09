@@ -93,8 +93,24 @@ def build_default_registry() -> StageRegistry:
     registry = StageRegistry()
 
     # Imported lazily to keep optional/heavy deps out of the import path.
+    from .data.ingest import run_ingest
     from .popsyn.stage import run_popsyn
+    from .zones.stage import run_zones
 
+    registry.register(
+        FunctionStage(
+            name="ingest",
+            fn=run_ingest,
+            description="Fetch/cache ACS marginals and PUMS seed records (fixture fallback).",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="zones",
+            fn=run_zones,
+            description="Build the model zone table from ingested block groups.",
+        )
+    )
     registry.register(
         FunctionStage(
             name="popsyn",
