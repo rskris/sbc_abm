@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+
+# Testing / tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data — large/raw artifacts are never committed; see docs/DATA_SOURCES.md
+data/raw/
+data/interim/
+data/processed/
+data/cache/
+*.parquet
+*.gpkg
+*.shp
+*.zip
+*.gz
+# keep small fixtures and any explicitly-tracked sample data
+!tests/fixtures/**
+!data/**/.gitkeep
+
+# Model run outputs
+outputs/
+runs/
+
+# OS
+.DS_Store

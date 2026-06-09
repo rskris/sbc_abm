@@ -1,0 +1,7 @@
+seed_household_id,total_households,hh_size_1,hh_size_2plus,hh_inc_low,hh_inc_high,pers_under18,pers_18plus
+1,1,1,0,1,0,0,1
+2,1,1,0,0,1,0,1
+3,1,0,1,1,0,0,2
+4,1,0,1,1,0,1,2
+5,1,0,1,0,1,2,2
+6,1,0,1,0,1,1,1

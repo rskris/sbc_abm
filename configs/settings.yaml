@@ -1,0 +1,63 @@
+# SBC ABM run configuration.
+# Every model run is fully described by this file plus the referenced data.
+
+# Region of interest. Santa Barbara County, California.
+region:
+  name: "Santa Barbara County"
+  state_fips: "06"
+  county_fips: "083"
+  # Projected CRS for distance/area work: CA State Plane Zone 5 (US ft).
+  working_crs: "EPSG:2229"
+  geographic_crs: "EPSG:4326"
+
+# Reproducibility: one seed governs all Monte-Carlo draws.
+random_seed: 42
+
+# Where the pipeline reads/writes data.
+paths:
+  cache_dir: "data/cache"        # downloaded raw inputs (git-ignored)
+  output_dir: "outputs"          # run artifacts (git-ignored)
+  fixtures_dir: "tests/fixtures" # offline fallback inputs
+
+# Public-data ingestion settings.
+data:
+  acs_year: 2022                 # ACS 5-year vintage
+  pums_year: 2022
+  tiger_year: 2022
+  census_api_key: null           # optional; set via env CENSUS_API_KEY for higher rate limits
+  # When true, ingestion may hit the network; when false, only cache/fixtures are used.
+  allow_network: true
+
+# Zone system. Default model zones are Census block groups acting as TAZs.
+zones:
+  system: "block_group"          # one of: block_group, tract, custom
+  custom_taz_path: null          # path to a TAZ shapefile when system == custom
+
+# Population synthesis controls.
+popsyn:
+  max_iterations: 2000
+  convergence_tolerance: 1.0e-4
+  # Marginal control sets, by level. Each entry names a control and the
+  # geography it is enforced at. (Real control tables are assembled in Phase 1;
+  # these names document intent and drive the balancer.)
+  household_controls:
+    - total_households
+    - households_by_size
+    - households_by_income
+  person_controls:
+    - total_persons
+    - persons_by_age
+    - persons_by_sex
+
+# Ordered pipeline stages. Stages not yet implemented are listed for intent and
+# skipped by the orchestrator with a clear message.
+pipeline:
+  stages:
+    - ingest        # fetch/cache public data            (Phase 1)
+    - zones         # build zone system                  (Phase 1)
+    - popsyn        # synthesize households & persons     (implemented)
+    - longterm      # workplace/school, auto ownership    (Phase 3)
+    - activitygen   # daily activity pattern, tours       (Phase 4)
+    - modechoice    # tour/trip mode & destination        (Phase 5)
+    - assignment    # network loading + skim feedback     (Phase 6)
+    - measures      # summaries & reports                 (Phase 7)
