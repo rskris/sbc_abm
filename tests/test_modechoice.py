@@ -112,7 +112,9 @@ def test_generate_trips_basic_tour_has_two_legs():
     tours["tour_mode"] = "drive_alone"
     # No stops: force stop_probability 0.
     auto = _skims().query("mode=='auto'")
-    trips = generate_trips(tours, _zones(), auto, rng=np.random.default_rng(0), stop_probability=0.0)
+    trips = generate_trips(
+        tours, _zones(), auto, rng=np.random.default_rng(0), stop_probability=0.0
+    )
     assert len(trips) == 2
     assert list(trips["outbound"]) == [True, False]
     assert (trips["mode"] == "drive_alone").all()
