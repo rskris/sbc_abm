@@ -85,8 +85,8 @@ src/sbcabm/
   choice/           discrete-choice engine: utility specs, MNL, nested logit,
                     destination choice (with alternative sampling), simulation
   longterm/         auto ownership, work & school location, transit pass, telecommute
-  activitygen/      daily activity pattern (CDAP), tour frequency,
-                    destination choice, time-of-day scheduling
+  activitygen/      household-interaction CDAP, tour frequency, joint tours,
+                    destination choice, discrete time-of-day choice
   modechoice/       tour mode choice (nested logit) + trip-list generation
   # forthcoming: assignment/ (MATSim-style network loading)
 tests/              unit tests + fixtures

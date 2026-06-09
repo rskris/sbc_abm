@@ -17,8 +17,9 @@ import pandas as pd
 from ..choice import load_spec
 from ..config import Config
 from ..pipeline import DataStore
-from .cdap import run_cdap
-from .scheduling import schedule_tours
+from .cdap import run_cdap_household
+from .joint_tours import generate_joint_tours
+from .scheduling import choose_time_of_day
 from .tours import assign_destinations, generate_tours, run_nonmandatory_frequency
 
 logger = logging.getLogger("sbcabm.activitygen")
@@ -37,25 +38,42 @@ def run_activitygen(config: Config, store: DataStore) -> None:
     zones = store.get("zones")
     persons = _prepare_persons(store.get("persons"), households)
 
+    # Coordinated daily activity pattern, with household interaction.
     cdap_spec = load_spec(_spec_path(config, _CDAP_SPEC))
-    persons["daily_pattern"] = run_cdap(persons, cdap_spec, rng=rng).to_numpy()
+    persons["daily_pattern"] = run_cdap_household(persons, cdap_spec, rng=rng).to_numpy()
 
+    # Individual non-mandatory tour frequency → the individual tour list.
     nm_spec = load_spec(_spec_path(config, _NM_FREQ_SPEC))
     nm_counts = run_nonmandatory_frequency(persons, nm_spec, rng=rng)
-
     tours = generate_tours(persons, nm_counts, rng=rng)
-    if store.has("skims"):
-        auto_skim = store.get("skims").query("mode == 'auto'")
+    tours["joint_tour_id"] = pd.NA
+
+    auto_skim = store.get("skims").query("mode == 'auto'") if store.has("skims") else None
+
+    # Fully-joint household tours, sharing a destination and schedule.
+    if auto_skim is not None:
+        next_id = int(tours["tour_id"].max()) + 1 if len(tours) else 0
+        joint = generate_joint_tours(persons, zones, auto_skim, rng=rng, first_tour_id=next_id)
+        if not joint.empty:
+            tours = pd.concat([tours, joint], ignore_index=True)
+
+    # Primary destinations (joint tours keep their pre-assigned destination).
+    if auto_skim is not None:
         tours = assign_destinations(tours, persons, zones, auto_skim, rng=rng)
     else:
         logger.warning("no auto skims; tours default to their home zone")
         tours["dest_zone"] = tours["home_zone"]
-    tours = schedule_tours(tours, rng=rng)
+
+    # Discrete time-of-day choice for every tour.
+    tours = choose_time_of_day(tours, rng=rng)
 
     store.put("persons", persons)
     store.put("tours", tours)
     logger.info(
-        "activitygen: %d persons patterned, %d tours generated", len(persons), len(tours)
+        "activitygen: %d persons patterned, %d tours (%d joint)",
+        len(persons),
+        len(tours),
+        int((tours["tour_category"] == "joint").sum()),
     )
 
 

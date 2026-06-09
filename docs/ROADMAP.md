@@ -66,17 +66,18 @@ in place. Remaining items are live-data validation.
   correction cancels), for very large alternative sets.
 - All wired into the `longterm` pipeline stage.
 
-## Phase 4 — Daily activities & tours 🚧
+## Phase 4 — Daily activities & tours ✅
 - ✅ Coordinated Daily Activity Pattern (CDAP): mandatory / non-mandatory / home
-  (person-level MNL, `configs/specs/cdap.csv`).
+  (`configs/specs/cdap.csv`), with **household interaction** — members choose
+  jointly via enumeration + pairwise interaction terms so families coordinate.
 - ✅ Tour frequency: one mandatory tour (work/school) + non-mandatory count MNL
   (`configs/specs/nonmandatory_tour_frequency.csv`).
-- ✅ Tour generation → `tours` table (category, purpose, home zone).
-- ✅ Tour primary-destination choice (work → workplace; others via the shared
-  destination-choice engine with purpose-specific employment size terms).
-- ✅ Tour time-of-day scheduling (purpose-based start/duration → period).
-- ⬜ Full household-interaction CDAP and joint tours.
-- ⬜ Discrete time-of-day choice (start/end period logit) replacing sampling.
+- ✅ **Fully-joint household tours** (shared destination and schedule).
+- ✅ Tour generation → `tours` table (category, purpose, home zone, joint id).
+- ✅ Tour primary-destination choice (work → workplace, school → school; others
+  via the shared destination-choice engine with purpose-specific size terms).
+- ✅ **Discrete time-of-day choice**: an MNL over enumerated (start, end) windows
+  penalizing deviation from purpose-preferred timing (replaces sampling).
 
 ## Phase 5 — Mode & trips 🚧
 - ✅ Nested-logit engine (`choice/nested_logit.py`): logsum nests, availability,

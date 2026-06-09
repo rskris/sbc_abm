@@ -124,14 +124,15 @@ def assign_destinations(
     back to total employment where a category is unavailable).
     """
     tours = tours.reset_index(drop=True).copy()
-    tours["dest_zone"] = pd.NA
+    if "dest_zone" not in tours.columns:
+        tours["dest_zone"] = pd.NA  # preserve any pre-assigned destinations (joint tours)
 
     # Mandatory tours go to the person's usual location (work or school).
     by_person = persons.set_index("person_id")
     for purpose, usual_col in (("work", "workplace_zone"), ("school", "school_zone")):
         if usual_col not in persons.columns:
             continue
-        mask = tours["purpose"] == purpose
+        mask = (tours["purpose"] == purpose) & tours["dest_zone"].isna()
         if mask.any():
             usual = by_person[usual_col]
             tours.loc[mask, "dest_zone"] = tours.loc[mask, "person_id"].map(usual).to_numpy()
