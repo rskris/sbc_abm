@@ -94,7 +94,9 @@ def build_default_registry() -> StageRegistry:
 
     # Imported lazily to keep optional/heavy deps out of the import path.
     from .data.ingest import run_ingest
+    from .network.stage import run_network
     from .popsyn.stage import run_popsyn
+    from .skims.stage import run_skims
     from .zones.stage import run_zones
 
     registry.register(
@@ -116,6 +118,20 @@ def build_default_registry() -> StageRegistry:
             name="popsyn",
             fn=run_popsyn,
             description="Synthesize households and persons from controls + seed.",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="network",
+            fn=run_network,
+            description="Build the multimodal network and zone connectors (OSM/fixtures).",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="skims",
+            fn=run_skims,
+            description="Compute free-flow auto/walk/bike level-of-service skims.",
         )
     )
     return registry

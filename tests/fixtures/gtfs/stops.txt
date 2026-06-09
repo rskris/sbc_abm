@@ -1,0 +1,3 @@
+stop_id,stop_name,stop_lat,stop_lon
+S1,Downtown Transit Center,34.42,-119.70
+S2,Uptown Plaza,34.43,-119.72

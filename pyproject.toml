@@ -20,20 +20,19 @@ dependencies = [
     "scipy>=1.10",
     "pyyaml>=6.0",
     "requests>=2.28",
+    "networkx>=3.0",
 ]
 
 [project.optional-dependencies]
-# Geospatial stack — zones, networks, accessibility.
+# Geospatial stack — zones, polygon geometry, accessibility.
 geo = [
     "geopandas>=0.14",
     "shapely>=2.0",
     "pyproj>=3.5",
 ]
-# Network ingestion & assignment (MATSim-inspired supply side).
-network = [
-    "networkx>=3.0",
+# Live OpenStreetMap network ingestion (skims work without it via fixtures/tables).
+osm = [
     "osmnx>=1.9",
-    "gtfs-kit>=10.0",
 ]
 # Developer tooling.
 dev = [

@@ -36,10 +36,18 @@ Legend: ✅ done · 🚧 in progress · ⬜ planned
 population + a zone system with land use, employment, geometry and adjacency) is
 in place. Remaining items are live-data validation.
 
-## Phase 2 — Networks & skims ⬜
-- ⬜ OSM → routable highway/bike/walk graph for the county (`osmnx`/`networkx`).
-- ⬜ GTFS ingestion (SBMTD, Clean Air Express, Amtrak) → transit routes/stops.
-- ⬜ Build initial **skims** (free-flow auto, transit, walk, bike) by time period.
+## Phase 2 — Networks & skims 🚧
+- ✅ Multimodal `Network` over tidy `network_nodes`/`network_links` tables
+  (`networkx`); mode-filtered graphs with per-link or constant-speed times.
+- ✅ OSM → network tables (`network/build.py`, best-effort, lazy `osmnx`) with a
+  fixture fallback; `network` pipeline stage.
+- ✅ Centroid connectors tying zones to the network.
+- ✅ Free-flow **skims** (auto/walk/bike) by shortest path, long-form by mode and
+  time period; `skims` pipeline stage.
+- ✅ GTFS ingestion (`data/transit.py`) → stops/routes, with a feed summary.
+- ⬜ Schedule-based **transit skims** (RAPTOR/CSA over the timetable): in-vehicle,
+  wait, transfer, and access/egress time.
+- ⬜ Time-of-day periods with congested speeds (fed back from assignment).
 
 ## Phase 3 — Long-term & mobility choices ⬜
 - ⬜ Auto-ownership model (ordered/multinomial logit).

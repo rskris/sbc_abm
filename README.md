@@ -79,7 +79,9 @@ src/sbcabm/
   zones/            zone system (TAZ / block-group) + zones stage
   popsyn/           population synthesis: IPF, list balancing, integerizer,
                     ACS→controls (marginals) + PUMS→seed (specs, seed, from_census)
-  # forthcoming: longterm/ activitygen/ tours/ modechoice/ skims/ assignment/
+  network/          multimodal network graph, OSM build, centroid connectors
+  skims/            zone-to-zone level-of-service matrices (auto/walk/bike)
+  # forthcoming: longterm/ activitygen/ tours/ modechoice/ assignment/
 tests/              unit tests + fixtures
 ```
 
