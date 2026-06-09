@@ -11,6 +11,7 @@ choices with a seeded RNG.
 
 from __future__ import annotations
 
+from .destination import destination_choice
 from .logit import (
     evaluate_utilities,
     mnl_probabilities,
@@ -20,6 +21,7 @@ from .logit import (
 from .spec import load_spec
 
 __all__ = [
+    "destination_choice",
     "evaluate_utilities",
     "load_spec",
     "mnl_probabilities",

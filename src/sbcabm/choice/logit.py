@@ -8,8 +8,23 @@ import pandas as pd
 from .spec import EXPRESSION_COLUMN, alternatives
 
 # Expressions are trusted model config, but we still evaluate them with a
-# restricted namespace (no builtins) plus a few numeric helpers.
-_SAFE_GLOBALS = {"__builtins__": {}, "np": np, "log": np.log, "exp": np.exp, "where": np.where}
+# restricted namespace: a handful of safe builtins/type constructors plus numpy.
+_SAFE_BUILTINS = {
+    "float": float,
+    "int": int,
+    "bool": bool,
+    "abs": abs,
+    "min": min,
+    "max": max,
+    "round": round,
+}
+_SAFE_GLOBALS = {
+    "__builtins__": _SAFE_BUILTINS,
+    "np": np,
+    "log": np.log,
+    "exp": np.exp,
+    "where": np.where,
+}
 
 
 def evaluate_utilities(

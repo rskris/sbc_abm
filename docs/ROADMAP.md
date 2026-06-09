@@ -62,11 +62,17 @@ in place. Remaining items are live-data validation.
 - ⬜ Transit pass / telecommute frequency.
 - ⬜ Alternative sampling for large destination-choice sets (county scale).
 
-## Phase 4 — Daily activities & tours ⬜
-- ⬜ Coordinated Daily Activity Pattern (CDAP): mandatory / non-mandatory / home.
-- ⬜ Tour frequency (mandatory, then non-mandatory).
-- ⬜ Tour time-of-day scheduling.
-- ⬜ Tour primary-destination choice.
+## Phase 4 — Daily activities & tours 🚧
+- ✅ Coordinated Daily Activity Pattern (CDAP): mandatory / non-mandatory / home
+  (person-level MNL, `configs/specs/cdap.csv`).
+- ✅ Tour frequency: one mandatory tour (work/school) + non-mandatory count MNL
+  (`configs/specs/nonmandatory_tour_frequency.csv`).
+- ✅ Tour generation → `tours` table (category, purpose, home zone).
+- ✅ Tour primary-destination choice (work → workplace; others via the shared
+  destination-choice engine with purpose-specific employment size terms).
+- ✅ Tour time-of-day scheduling (purpose-based start/duration → period).
+- ⬜ Full household-interaction CDAP and joint tours.
+- ⬜ Discrete time-of-day choice (start/end period logit) replacing sampling.
 
 ## Phase 5 — Mode & trips ⬜
 - ⬜ Tour mode choice (nested logit: auto/transit/active sub-nests).

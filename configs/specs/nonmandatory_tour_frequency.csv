@@ -1,0 +1,5 @@
+label,expression,nm_0,nm_1,nm_2
+asc,@1,0,-0.3,-1.2
+has_vehicle,@(auto_ownership!='cars_0').astype(float),0,0.3,0.5
+senior,@(AGEP>=65).astype(float),0,0.2,0.1
+nonmandatory_pattern,@(daily_pattern=='nonmandatory').astype(float),0,0.8,0.6

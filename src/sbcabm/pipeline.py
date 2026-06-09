@@ -93,6 +93,7 @@ def build_default_registry() -> StageRegistry:
     registry = StageRegistry()
 
     # Imported lazily to keep optional/heavy deps out of the import path.
+    from .activitygen.stage import run_activitygen
     from .data.ingest import run_ingest
     from .longterm.stage import run_longterm
     from .network.stage import run_network
@@ -147,6 +148,13 @@ def build_default_registry() -> StageRegistry:
             name="longterm",
             fn=run_longterm,
             description="Auto ownership and usual workplace location choice.",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="activitygen",
+            fn=run_activitygen,
+            description="Daily activity pattern, tour frequency, destination & scheduling.",
         )
     )
     return registry
