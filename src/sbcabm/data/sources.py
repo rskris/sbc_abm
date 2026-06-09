@@ -80,6 +80,18 @@ SOURCES: dict[str, DataSource] = {
         license="public domain (US Government work)",
         notes="Employment by sector → zonal size terms.",
     ),
+    "gazetteer_bg": DataSource(
+        key="gazetteer_bg",
+        name="Census Gazetteer — block groups",
+        host="www2.census.gov",
+        url_template=(
+            "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/"
+            "{year}_Gazetteer/{year}_gaz_blockgroups_{state_fips}.txt"
+        ),
+        geography="block group",
+        license="public domain (US Government work)",
+        notes="Tab-delimited block-group centroids (INTPTLAT/LONG) and land area.",
+    ),
     "osm": DataSource(
         key="osm",
         name="OpenStreetMap (Geofabrik California extract)",

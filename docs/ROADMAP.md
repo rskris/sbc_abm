@@ -23,8 +23,11 @@ Legend: ✅ done · 🚧 in progress · ⬜ planned
 - ✅ `zones` stage: model zone table (block groups as TAZs) from ingested data.
 - ✅ Popsyn consumes ingested Census tables end-to-end (`from_census.py`);
   infeasible controls (sparse-seed categories) are relaxed, not fatal.
-- ⬜ TIGER/Line ingestion → block-group geometries, PUMAs, centroids (geo extra).
-- ⬜ LODES (LEHD) employment by sector to each zone (size terms).
+- ✅ LODES (LEHD) WAC employment aggregated block→block-group into model
+  categories (retail/office/industrial/education/health/service size terms).
+- ✅ Zone centroids + land area from Census Gazetteer (no geopandas needed);
+  zone table enriched with employment, centroids, and densities.
+- ⬜ TIGER/Line polygon geometry + adjacency (geo extra) for mapping/routing.
 - ⬜ Run against live SB County data in a network-enabled environment; validate
   the default ACS/PUMS variable scheme for the configured vintage.
 

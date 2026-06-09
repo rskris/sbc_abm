@@ -8,6 +8,14 @@ Census ACS/PUMS client and the source registry are provided.
 
 from __future__ import annotations
 
+from .employment import aggregate_employment
+from .geographies import parse_gazetteer
 from .sources import SOURCES, DataSource, get_source
 
-__all__ = ["SOURCES", "DataSource", "get_source"]
+__all__ = [
+    "SOURCES",
+    "DataSource",
+    "aggregate_employment",
+    "get_source",
+    "parse_gazetteer",
+]
