@@ -96,6 +96,7 @@ def build_default_registry() -> StageRegistry:
     from .activitygen.stage import run_activitygen
     from .data.ingest import run_ingest
     from .longterm.stage import run_longterm
+    from .modechoice.stage import run_modechoice
     from .network.stage import run_network
     from .popsyn.stage import run_popsyn
     from .skims.stage import run_skims, run_transit_skims
@@ -155,6 +156,13 @@ def build_default_registry() -> StageRegistry:
             name="activitygen",
             fn=run_activitygen,
             description="Daily activity pattern, tour frequency, destination & scheduling.",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="modechoice",
+            fn=run_modechoice,
+            description="Tour mode choice (nested logit) and trip-list generation.",
         )
     )
     return registry

@@ -18,13 +18,16 @@ from .logit import (
     mnl_simulate,
     simulate_choices,
 )
+from .nested_logit import Nest, nested_logit_probabilities
 from .spec import load_spec
 
 __all__ = [
+    "Nest",
     "destination_choice",
     "evaluate_utilities",
     "load_spec",
     "mnl_probabilities",
     "mnl_simulate",
+    "nested_logit_probabilities",
     "simulate_choices",
 ]

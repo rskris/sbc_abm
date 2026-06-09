@@ -1,0 +1,8 @@
+label,expression,drive_alone,shared_ride,walk_transit,walk,bike
+asc,@1,0,-0.4,-0.9,-1.0,-1.6
+travel_time_auto,@auto_time,-0.025,-0.025,0,0,0
+cost_auto,@auto_cost,-0.25,-0.12,0,0,0
+travel_time_transit,@transit_time,0,0,-0.022,0,0
+cost_transit,@transit_cost,0,0,-0.25,0,0
+walk_time,@walk_time,0,0,0,-0.06,0
+bike_time,@bike_time,0,0,0,0,-0.04
