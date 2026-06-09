@@ -36,7 +36,7 @@ Legend: ✅ done · 🚧 in progress · ⬜ planned
 population + a zone system with land use, employment, geometry and adjacency) is
 in place. Remaining items are live-data validation.
 
-## Phase 2 — Networks & skims 🚧
+## Phase 2 — Networks & skims ✅
 - ✅ Multimodal `Network` over tidy `network_nodes`/`network_links` tables
   (`networkx`); mode-filtered graphs with per-link or constant-speed times.
 - ✅ OSM → network tables (`network/build.py`, best-effort, lazy `osmnx`) with a
@@ -44,10 +44,13 @@ in place. Remaining items are live-data validation.
 - ✅ Centroid connectors tying zones to the network.
 - ✅ Free-flow **skims** (auto/walk/bike) by shortest path, long-form by mode and
   time period; `skims` pipeline stage.
-- ✅ GTFS ingestion (`data/transit.py`) → stops/routes, with a feed summary.
-- ⬜ Schedule-based **transit skims** (RAPTOR/CSA over the timetable): in-vehicle,
-  wait, transfer, and access/egress time.
-- ⬜ Time-of-day periods with congested speeds (fed back from assignment).
+- ✅ GTFS ingestion (`data/transit.py`) → stops/routes/trips/stop_times.
+- ✅ Schedule-based **transit skims** via RAPTOR (`skims/transit.py`): timetable
+  build, round-based earliest-arrival routing, and zone-to-zone skims decomposed
+  into access / in-vehicle / wait / transfer-walk / egress + transfer count;
+  `transit_skims` pipeline stage.
+- ⬜ Time-of-day periods with congested speeds (closes the loop with assignment,
+  Phase 6).
 
 ## Phase 3 — Long-term & mobility choices ⬜
 - ⬜ Auto-ownership model (ordered/multinomial logit).

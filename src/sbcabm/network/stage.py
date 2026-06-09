@@ -72,6 +72,8 @@ def _ingest_transit(config: Config, store: DataStore) -> None:
         return
     store.put("transit_stops", gtfs.get("stops", pd.DataFrame()))
     store.put("transit_routes", gtfs.get("routes", pd.DataFrame()))
+    store.put("transit_trips", gtfs.get("trips", pd.DataFrame()))
+    store.put("transit_stop_times", gtfs.get("stop_times", pd.DataFrame()))
     logger.info(
         "transit: %d stops, %d routes",
         len(store.get("transit_stops")),

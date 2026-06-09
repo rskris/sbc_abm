@@ -10,5 +10,14 @@ package computes free-flow auto / walk / bike skims by shortest path over the
 from __future__ import annotations
 
 from .skims import DEFAULT_MODES, SkimMode, compute_skims
+from .transit import Timetable, build_timetable, compute_transit_skims, raptor
 
-__all__ = ["DEFAULT_MODES", "SkimMode", "compute_skims"]
+__all__ = [
+    "DEFAULT_MODES",
+    "SkimMode",
+    "Timetable",
+    "build_timetable",
+    "compute_skims",
+    "compute_transit_skims",
+    "raptor",
+]

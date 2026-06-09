@@ -80,7 +80,8 @@ src/sbcabm/
   popsyn/           population synthesis: IPF, list balancing, integerizer,
                     ACS→controls (marginals) + PUMS→seed (specs, seed, from_census)
   network/          multimodal network graph, OSM build, centroid connectors
-  skims/            zone-to-zone level-of-service matrices (auto/walk/bike)
+  skims/            level-of-service matrices: auto/walk/bike shortest-path
+                    + schedule-based transit (RAPTOR over GTFS)
   # forthcoming: longterm/ activitygen/ tours/ modechoice/ assignment/
 tests/              unit tests + fixtures
 ```

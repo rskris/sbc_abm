@@ -96,7 +96,7 @@ def build_default_registry() -> StageRegistry:
     from .data.ingest import run_ingest
     from .network.stage import run_network
     from .popsyn.stage import run_popsyn
-    from .skims.stage import run_skims
+    from .skims.stage import run_skims, run_transit_skims
     from .zones.stage import run_zones
 
     registry.register(
@@ -132,6 +132,13 @@ def build_default_registry() -> StageRegistry:
             name="skims",
             fn=run_skims,
             description="Compute free-flow auto/walk/bike level-of-service skims.",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="transit_skims",
+            fn=run_transit_skims,
+            description="Compute schedule-based transit skims from GTFS (RAPTOR).",
         )
     )
     return registry
