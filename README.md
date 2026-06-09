@@ -82,7 +82,9 @@ src/sbcabm/
   network/          multimodal network graph, OSM build, centroid connectors
   skims/            level-of-service matrices: auto/walk/bike shortest-path
                     + schedule-based transit (RAPTOR over GTFS)
-  # forthcoming: longterm/ activitygen/ tours/ modechoice/ assignment/
+  choice/           discrete-choice engine: utility specs, MNL, simulation
+  longterm/         auto ownership + workplace location choice
+  # forthcoming: activitygen/ tours/ modechoice/ assignment/
 tests/              unit tests + fixtures
 ```
 

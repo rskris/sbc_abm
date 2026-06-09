@@ -94,6 +94,7 @@ def build_default_registry() -> StageRegistry:
 
     # Imported lazily to keep optional/heavy deps out of the import path.
     from .data.ingest import run_ingest
+    from .longterm.stage import run_longterm
     from .network.stage import run_network
     from .popsyn.stage import run_popsyn
     from .skims.stage import run_skims, run_transit_skims
@@ -139,6 +140,13 @@ def build_default_registry() -> StageRegistry:
             name="transit_skims",
             fn=run_transit_skims,
             description="Compute schedule-based transit skims from GTFS (RAPTOR).",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="longterm",
+            fn=run_longterm,
+            description="Auto ownership and usual workplace location choice.",
         )
     )
     return registry

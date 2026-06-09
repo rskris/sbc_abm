@@ -68,18 +68,21 @@ class Config:
     zones: ZonesConfig = field(default_factory=ZonesConfig)
     popsyn: PopsynConfig = field(default_factory=PopsynConfig)
     stages: list[str] = field(default_factory=list)
+    # Directory containing the loaded config file; spec/relative paths resolve
+    # against it so a run works regardless of the current working directory.
+    config_dir: Path = field(default_factory=lambda: Path("."))
     # Original parsed mapping, kept for forward-compatibility / debugging.
     raw: dict[str, Any] = field(default_factory=dict, repr=False)
 
     @classmethod
     def from_file(cls, path: str | os.PathLike[str]) -> Config:
         """Load and validate configuration from a YAML file."""
-        text = Path(path).read_text(encoding="utf-8")
-        data = yaml.safe_load(text) or {}
-        return cls.from_dict(data)
+        path = Path(path)
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        return cls.from_dict(data, config_dir=path.resolve().parent)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> Config:
+    def from_dict(cls, data: dict[str, Any], *, config_dir: Path | None = None) -> Config:
         if "region" not in data:
             raise ValueError("config is missing required 'region' section")
         region = RegionConfig(**data["region"])
@@ -115,6 +118,7 @@ class Config:
             zones=zones,
             popsyn=popsyn,
             stages=stages,
+            config_dir=config_dir or Path("."),
             raw=data,
         )
 

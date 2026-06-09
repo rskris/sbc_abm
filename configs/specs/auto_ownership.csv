@@ -1,0 +1,6 @@
+label,expression,cars_0,cars_1,cars_2,cars_3p
+asc,@1,0,1.5,0.8,-0.6
+household_size,NP,0,0.10,0.45,0.70
+income_per_100k,@HINCP/100000,0,0.60,1.20,1.60
+household_density,hh_density,0,-0.020,-0.050,-0.080
+employment_density,emp_density,0,-0.010,-0.030,-0.050

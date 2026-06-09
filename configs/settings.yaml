@@ -59,7 +59,7 @@ pipeline:
     - skims         # auto/walk/bike level-of-service     (implemented)
     - transit_skims # schedule-based transit (RAPTOR)     (implemented)
     - popsyn        # synthesize households & persons     (implemented)
-    - longterm      # workplace/school, auto ownership    (Phase 3)
+    - longterm      # auto ownership + workplace location (implemented)
     - activitygen   # daily activity pattern, tours       (Phase 4)
     - modechoice    # tour/trip mode & destination        (Phase 5)
     - assignment    # network loading + skim feedback     (Phase 6)
