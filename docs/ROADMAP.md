@@ -52,15 +52,19 @@ in place. Remaining items are live-data validation.
 - ⬜ Time-of-day periods with congested speeds (closes the loop with assignment,
   Phase 6).
 
-## Phase 3 — Long-term & mobility choices 🚧
+## Phase 3 — Long-term & mobility choices ✅
 - ✅ Reusable discrete-choice engine (`choice/`): CSV utility specs, expression
-  evaluation, MNL probabilities (with availability), seeded simulation.
+  evaluation, MNL probabilities (with availability), seeded simulation, and a
+  shared destination-choice helper with optional alternative sampling.
 - ✅ Auto-ownership model (MNL, `configs/specs/auto_ownership.csv`).
 - ✅ Usual workplace location choice (destination-choice logit; employment size
-  terms + auto-skim impedance), `longterm` pipeline stage.
-- ⬜ School location choice (enrollment size terms).
-- ⬜ Transit pass / telecommute frequency.
-- ⬜ Alternative sampling for large destination-choice sets (county scale).
+  terms + auto-skim impedance).
+- ✅ Usual school location choice (education-employment size term, total-jobs
+  fallback).
+- ✅ Transit pass (binary) and telecommute frequency (3-level) models.
+- ✅ Alternative sampling for destination choice (uniform per-chooser sampling;
+  correction cancels), for very large alternative sets.
+- All wired into the `longterm` pipeline stage.
 
 ## Phase 4 — Daily activities & tours 🚧
 - ✅ Coordinated Daily Activity Pattern (CDAP): mandatory / non-mandatory / home

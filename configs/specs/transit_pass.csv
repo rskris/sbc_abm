@@ -1,0 +1,6 @@
+label,expression,pass_no,pass_yes
+asc,@1,0,-1.8
+no_vehicle,@(auto_ownership=='cars_0').astype(float),0,2.2
+worker,@has_workplace.astype(float),0,0.6
+senior,@(AGEP>=65).astype(float),0,0.4
+youth,@((AGEP>=12)&(AGEP<=24)).astype(float),0,0.7

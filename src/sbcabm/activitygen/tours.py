@@ -126,13 +126,21 @@ def assign_destinations(
     tours = tours.reset_index(drop=True).copy()
     tours["dest_zone"] = pd.NA
 
-    if "workplace_zone" in persons.columns:
-        workplace = persons.set_index("person_id")["workplace_zone"]
-        work = tours["purpose"] == "work"
-        tours.loc[work, "dest_zone"] = tours.loc[work, "person_id"].map(workplace).to_numpy()
+    # Mandatory tours go to the person's usual location (work or school).
+    by_person = persons.set_index("person_id")
+    for purpose, usual_col in (("work", "workplace_zone"), ("school", "school_zone")):
+        if usual_col not in persons.columns:
+            continue
+        mask = tours["purpose"] == purpose
+        if mask.any():
+            usual = by_person[usual_col]
+            tours.loc[mask, "dest_zone"] = tours.loc[mask, "person_id"].map(usual).to_numpy()
 
     for purpose, size_col in _PURPOSE_SIZE.items():
         mask = tours["purpose"] == purpose
+        # School handled above when a usual school zone exists; only choose for
+        # tours still missing a destination.
+        mask &= tours["dest_zone"].isna()
         if not mask.any():
             continue
         col = size_col if size_col in zones.columns else "emp_total"
