@@ -20,6 +20,7 @@ import numpy as np
 import pandas as pd
 
 from ..config import Config
+from ..data import tiger
 from ..data.employment import LODES_SECTOR_GROUPS, aggregate_employment
 from ..data.geographies import parse_gazetteer
 from ..pipeline import DataStore
@@ -48,19 +49,23 @@ def run_zones(config: Config, store: DataStore) -> None:
 
     zones = zones.set_index("zone_id", drop=False)
     zones = _merge_employment(zones, store)
-    zones = _merge_geography(zones, store)
+    zones = _merge_geography(zones, store, config)
     zones = _derive_densities(zones)
     zones = zones.reset_index(drop=True)
 
     # Validate via ZoneSystem (unique ids, required columns) before storing.
     ZoneSystem.from_frame(zones)
     store.put("zones", zones)
+
+    _attach_polygons(store, config)
+
     logger.info(
-        "built zone system: %d zones (%s)%s%s",
+        "built zone system: %d zones (%s)%s%s%s",
         len(zones),
         config.zones.system,
         ", +employment" if "emp_total" in zones.columns else "",
         ", +centroids" if "centroid_x" in zones.columns else "",
+        ", +geometry" if store.has("zone_geometries") else "",
     )
 
 
@@ -74,11 +79,30 @@ def _merge_employment(zones: pd.DataFrame, store: DataStore) -> pd.DataFrame:
     return zones
 
 
-def _merge_geography(zones: pd.DataFrame, store: DataStore) -> pd.DataFrame:
-    if not store.has("gazetteer"):
+def _merge_geography(zones: pd.DataFrame, store: DataStore, config: Config) -> pd.DataFrame:
+    """Attach centroid/area, preferring the Gazetteer's official internal point;
+    fall back to centroids/area computed from TIGER polygons."""
+    if store.has("gazetteer"):
+        geo = parse_gazetteer(store.get("gazetteer"))
+    elif store.has("block_group_geometries"):
+        geo = tiger.zone_geometry_attributes(
+            store.get("block_group_geometries"),
+            working_crs=config.region.working_crs,
+            geographic_crs=config.region.geographic_crs,
+            geoid_col="zone_id",
+        )
+    else:
         return zones
-    geo = parse_gazetteer(store.get("gazetteer"))
     return zones.join(geo, how="left")
+
+
+def _attach_polygons(store: DataStore, config: Config) -> None:
+    """Store standardized zone polygons and a zone adjacency edge list."""
+    if not store.has("block_group_geometries"):
+        return
+    geometries = store.get("block_group_geometries")
+    store.put("zone_geometries", geometries)
+    store.put("zone_adjacency", tiger.build_adjacency(geometries, geoid_col="zone_id"))
 
 
 def _derive_densities(zones: pd.DataFrame) -> pd.DataFrame:

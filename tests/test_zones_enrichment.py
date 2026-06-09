@@ -93,8 +93,8 @@ def test_zones_stage_degrades_without_optional_inputs():
     pipeline = _offline_pipeline()
     pipeline.run(["ingest"])
     # Drop optional tables to simulate an ACS-only ingest.
-    pipeline.store._tables.pop("lodes_wac", None)  # noqa: SLF001 — test introspection
-    pipeline.store._tables.pop("gazetteer", None)  # noqa: SLF001
+    for name in ("lodes_wac", "gazetteer", "block_group_geometries"):
+        pipeline.store._tables.pop(name, None)  # noqa: SLF001 — test introspection
     pipeline.run(["zones"])
 
     zones = pipeline.store.get("zones")

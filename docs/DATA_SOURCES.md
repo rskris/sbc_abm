@@ -11,7 +11,7 @@ provenance. Santa Barbara County FIPS = **06083** (state 06, county 083).
 | PUMS (Public Use Microdata Sample) | Census Bureau API / FTP | Seed households & persons for synthesis | PUMA | `data/census.py` |
 | Census Gazetteer | Census Bureau | Zone centroids (INTPTLAT/LONG) + land area | Block group | `data/geographies.py` |
 | LODES / LEHD (WAC) | Census LEHD | Employment by sector per zone (size terms) | Block → block group | `data/employment.py` |
-| TIGER/Line shapefiles | Census Bureau | Polygon geometry, adjacency, routing | Block group, tract, PUMA | `data/geographies.py` *(geo extra, planned)* |
+| TIGER/Line shapefiles | Census Bureau | Polygon geometry, centroids, adjacency | Block group, tract, PUMA | `data/tiger.py` *(geo extra)* |
 | OpenStreetMap | Geofabrik / Overpass | Routable highway, bike, walk networks | County | `data/networks.py` *(planned)* |
 | GTFS — SBMTD | Santa Barbara MTD | Local transit routes, stops, schedules | County | `data/transit.py` *(planned)* |
 | GTFS — Clean Air Express / Amtrak | respective agencies | Regional/commuter transit | Region | `data/transit.py` *(planned)* |

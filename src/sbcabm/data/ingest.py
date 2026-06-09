@@ -34,11 +34,17 @@ from ..popsyn.specs import (
 )
 from .census import CensusClient
 from .sources import get_source
+from .tiger import (
+    clip_to_county,
+    geodataframe_from_wkt,
+    read_block_group_shapefile,
+    standardize_geometries,
+)
 
 logger = logging.getLogger("sbcabm.data.ingest")
 
 _REQUIRED_OUTPUTS = ("acs_block_groups", "pums_households", "pums_persons")
-_OPTIONAL_OUTPUTS = ("lodes_wac", "gazetteer")
+_OPTIONAL_OUTPUTS = ("lodes_wac", "gazetteer", "block_group_geometries")
 _SERIALNO = "SERIALNO"
 _DOWNLOAD_TIMEOUT = 60
 
@@ -83,6 +89,7 @@ def _ingest_from_census(config: Config, store: DataStore, specs) -> None:
     # Best-effort enrichment sources: a failure here is non-fatal.
     _try_optional(store, "lodes_wac", lambda: _fetch_lodes(config))
     _try_optional(store, "gazetteer", lambda: _fetch_gazetteer(config))
+    _try_optional(store, "block_group_geometries", lambda: _fetch_tiger(config))
 
 
 def _split_pums(pums: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -120,6 +127,24 @@ def _fetch_gazetteer(config: Config) -> pd.DataFrame:
     )
 
 
+def _fetch_tiger(config: Config):
+    """Download and clip TIGER/Line block-group polygons for the county."""
+    source = get_source("tiger_bg")
+    url = source.url(year=config.data.tiger_year, state_fips=config.region.state_fips)
+    cache = Path(config.paths.cache_dir) / "tiger" / Path(url).name
+    if not cache.exists():
+        if not config.data.allow_network:
+            raise RuntimeError(f"network disabled and no cache at {cache}")
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        logger.info("downloading %s", url)
+        response = requests.get(url, timeout=_DOWNLOAD_TIMEOUT)
+        response.raise_for_status()
+        cache.write_bytes(response.content)
+    gdf = read_block_group_shapefile(str(cache))
+    gdf = clip_to_county(gdf, config.region.county_geoid)
+    return standardize_geometries(gdf)
+
+
 def _download_table(url: str, cache: Path, *, allow_network: bool, **read_kwargs) -> pd.DataFrame:
     if not cache.exists():
         if not allow_network:
@@ -148,7 +173,12 @@ def _ingest_from_fixtures(config: Config, store: DataStore) -> None:
             )
         header = pd.read_csv(path, nrows=0).columns
         dtypes = {c: t for c, t in id_dtypes.items() if c in header}
-        store.put(name, pd.read_csv(path, dtype=dtypes))
+        table = pd.read_csv(path, dtype=dtypes)
+        # Geometry travels as WKT in the fixture; reconstitute a GeoDataFrame
+        # and standardize it just like the live TIGER path (GEOID → zone_id).
+        if name == "block_group_geometries":
+            table = standardize_geometries(geodataframe_from_wkt(table))
+        store.put(name, table)
     logger.info("loaded census fixtures from %s", fixtures)
 
 

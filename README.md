@@ -74,7 +74,8 @@ src/sbcabm/
   config.py         typed configuration loader
   pipeline.py       stage registry + orchestrator
   cli.py            `sbcabm` command-line entry point
-  data/             public-data ingestion (census, sources, ingest stage)
+  data/             public-data ingestion (census, lodes employment,
+                    gazetteer + tiger geography, sources, ingest stage)
   zones/            zone system (TAZ / block-group) + zones stage
   popsyn/           population synthesis: IPF, list balancing, integerizer,
                     ACS→controls (marginals) + PUMS→seed (specs, seed, from_census)

@@ -27,9 +27,14 @@ Legend: ✅ done · 🚧 in progress · ⬜ planned
   categories (retail/office/industrial/education/health/service size terms).
 - ✅ Zone centroids + land area from Census Gazetteer (no geopandas needed);
   zone table enriched with employment, centroids, and densities.
-- ⬜ TIGER/Line polygon geometry + adjacency (geo extra) for mapping/routing.
+- ✅ TIGER/Line polygon geometry (geo extra): standardized zone polygons,
+  geometric centroids/area, and a zone adjacency (contiguity) edge list.
 - ⬜ Run against live SB County data in a network-enabled environment; validate
   the default ACS/PUMS variable scheme for the configured vintage.
+
+**Phase 1 is functionally complete** — the data foundation (synthetic
+population + a zone system with land use, employment, geometry and adjacency) is
+in place. Remaining items are live-data validation.
 
 ## Phase 2 — Networks & skims ⬜
 - ⬜ OSM → routable highway/bike/walk graph for the county (`osmnx`/`networkx`).
