@@ -153,9 +153,16 @@ def test_modechoice_stage_runs_offline():
 
     assert len(trips) >= len(tours)  # at least two legs per tour
     assert {"origin_zone", "dest_zone", "mode", "depart_hour"}.issubset(trips.columns)
-    # Every trip's mode is its tour's mode.
+    # Every trip's mode is consistent with (in the allowed set of) its tour mode.
+    from sbcabm.modechoice.trip_mode import _CONSISTENT
+
     tour_mode = tours.set_index("tour_id")["tour_mode"]
-    assert (trips["mode"] == trips["tour_id"].map(tour_mode)).all()
+    trip_tour_mode = trips["tour_id"].map(tour_mode)
+    consistent = [
+        trip in _CONSISTENT.get(tm, (trip,))
+        for trip, tm in zip(trips["mode"], trip_tour_mode, strict=True)
+    ]
+    assert all(consistent)
 
 
 def test_modechoice_requires_tours():

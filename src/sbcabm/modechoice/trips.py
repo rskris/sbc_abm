@@ -1,10 +1,11 @@
 """Trip generation: break tours into trips with intermediate stops.
 
-A tour decomposes into trips (legs) between successive activity locations. Each
-tour may gain at most one intermediate stop per direction (a simplified
-stop-frequency model); stop locations come from the shared destination-choice
-engine. Trips inherit the tour's mode and are spread across the tour's time
-window. The result is the trip list the assignment stage will load.
+A tour decomposes into trips (legs) between successive activity locations. The
+number of stops on each half-tour comes from the stop-frequency model and their
+purposes from the stop-purpose model (``stops.py``); stop locations come from the
+shared destination-choice engine. Trips are spread across the tour's time window;
+their modes are set by trip mode choice (``trip_mode.py``). The result is the
+trip list the assignment stage will load.
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ import numpy as np
 import pandas as pd
 
 from ..choice.destination import destination_choice
+from .stops import sample_stop_purpose
 
 logger = logging.getLogger("sbcabm.modechoice.trips")
 
@@ -31,7 +33,7 @@ TRIP_COLUMNS = (
     "mode",
     "depart_hour",
 )
-_STOP_SIZE = {"shopping": "emp_retail", "other": "emp_service"}
+_STOP_SIZE = {"shopping": "emp_retail", "other": "emp_service", "eatout": "emp_service"}
 
 
 def generate_trips(
@@ -41,24 +43,33 @@ def generate_trips(
     *,
     rng: np.random.Generator,
     stop_probability: float = 0.25,
+    out_stops: np.ndarray | None = None,
+    in_stops: np.ndarray | None = None,
 ) -> pd.DataFrame:
-    """Build the trip list from scheduled, mode-assigned tours."""
+    """Build the trip list from scheduled, mode-assigned tours.
+
+    ``out_stops`` / ``in_stops`` give the number of intermediate stops per
+    half-tour (from the stop-frequency model); when omitted, a simple Bernoulli
+    with ``stop_probability`` is used per direction.
+    """
     tours = tours.reset_index(drop=True)
     n = len(tours)
-    out_stop = rng.random(n) < stop_probability
-    in_stop = rng.random(n) < stop_probability
-    stop_zone = _choose_stop_locations(tours, out_stop, in_stop, zones, auto_skim, rng)
+    if out_stops is None:
+        out_stops = (rng.random(n) < stop_probability).astype(int)
+    if in_stops is None:
+        in_stops = (rng.random(n) < stop_probability).astype(int)
+    stop_zone = _choose_stop_locations(tours, out_stops, in_stops, zones, auto_skim, rng)
 
     rows = []
     trip_id = 0
     for i, tour in enumerate(tours.itertuples()):
         nodes = [(tour.home_zone, "home")]
-        if (i, "outbound") in stop_zone:
-            nodes.append(stop_zone[(i, "outbound")])
+        for slot in range(int(out_stops[i])):
+            nodes.append(stop_zone[(i, "outbound", slot)])
         primary_index = len(nodes)
         nodes.append((tour.dest_zone, tour.purpose))
-        if (i, "inbound") in stop_zone:
-            nodes.append(stop_zone[(i, "inbound")])
+        for slot in range(int(in_stops[i])):
+            nodes.append(stop_zone[(i, "inbound", slot)])
         nodes.append((tour.home_zone, "home"))
 
         legs = len(nodes) - 1
@@ -89,29 +100,36 @@ def generate_trips(
     return trips
 
 
-def _choose_stop_locations(tours, out_stop, in_stop, zones, auto_skim, rng) -> dict:
-    """Pick a zone (and purpose) for each requested intermediate stop, batched."""
+def _choose_stop_locations(tours, out_stops, in_stops, zones, auto_skim, rng) -> dict:
+    """Pick a zone (and purpose) for each requested intermediate stop, batched.
+
+    Keyed by ``(tour_row, direction, slot)`` so a half-tour may hold several
+    stops. Stop purposes follow the tour purpose via :func:`sample_stop_purpose`.
+    """
     requests = []
     for i in range(len(tours)):
-        for direction, present in (("outbound", out_stop[i]), ("inbound", in_stop[i])):
-            if present:
-                purpose = "shopping" if rng.random() < 0.5 else "other"
-                requests.append((i, direction, purpose, tours.at[i, "home_zone"]))
+        tour_purpose = tours.at[i, "purpose"]
+        home_zone = tours.at[i, "home_zone"]
+        for direction, count in (("outbound", out_stops[i]), ("inbound", in_stops[i])):
+            for slot in range(int(count)):
+                purpose = sample_stop_purpose(tour_purpose, rng)
+                requests.append((i, direction, slot, purpose, home_zone))
     if not requests:
         return {}
 
-    req = pd.DataFrame(requests, columns=["tour_row", "direction", "purpose", "zone_id"])
+    req = pd.DataFrame(
+        requests, columns=["tour_row", "direction", "slot", "purpose", "zone_id"]
+    )
     stop_zone: dict = {}
-    for purpose, size_col in _STOP_SIZE.items():
+    for purpose in req["purpose"].unique():
         mask = req["purpose"] == purpose
-        if not mask.any():
-            continue
+        size_col = _STOP_SIZE.get(purpose, "emp_total")
         col = size_col if size_col in zones.columns else "emp_total"
         sub = req.loc[mask]
         chosen = destination_choice(
             sub, zones, auto_skim, rng=rng, size_col=col, origin_col="zone_id"
         )
         for idx in sub.index:
-            key = (sub.at[idx, "tour_row"], sub.at[idx, "direction"])
+            key = (sub.at[idx, "tour_row"], sub.at[idx, "direction"], sub.at[idx, "slot"])
             stop_zone[key] = (chosen.loc[idx], purpose)
     return stop_zone

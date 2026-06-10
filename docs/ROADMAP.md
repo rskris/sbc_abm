@@ -79,16 +79,18 @@ in place. Remaining items are live-data validation.
 - ✅ **Discrete time-of-day choice**: an MNL over enumerated (start, end) windows
   penalizing deviation from purpose-preferred timing (replaces sampling).
 
-## Phase 5 — Mode & trips 🚧
+## Phase 5 — Mode & trips ✅
 - ✅ Nested-logit engine (`choice/nested_logit.py`): logsum nests, availability,
   stable computation; λ = 1 reduces to MNL.
 - ✅ Tour mode choice (auto / transit / active nests) over per-tour LOS from the
   skims, with vehicle/reachability availability (`configs/specs/tour_mode_choice.csv`).
-- ✅ Intermediate-stop frequency (per direction) and location (destination
-  choice), building the **trip list** with departure times.
-- ✅ `modechoice` pipeline stage → `trips` table.
-- ⬜ Discrete trip mode choice (currently inherits the tour mode).
-- ⬜ Joint half-tour stop frequency and stop-purpose models.
+- ✅ **Joint half-tour stop frequency** (one MNL over joint outbound/inbound stop
+  counts, `configs/specs/stop_frequency.csv`) and a **stop-purpose** model.
+- ✅ Trip generation → the **trip list** with intermediate stops and departure
+  times spread across the tour window.
+- ✅ **Discrete trip mode choice**: each trip re-chooses its mode, constrained to
+  be consistent with the tour mode (nested logit on the trip's own LOS).
+- ✅ `modechoice` pipeline stage → moded `tours` + a `trips` table.
 
 ## Phase 6 — Assignment & equilibrium ⬜
 - ⬜ Static volume-delay (BPR) assignment for fast iterations.

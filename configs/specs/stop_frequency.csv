@@ -1,0 +1,5 @@
+label,expression,s0_0,s1_0,s0_1,s1_1,s2_0,s0_2,s2_1,s1_2,s2_2
+asc,@1,0,-1.0,-1.0,-2.0,-2.6,-2.6,-3.2,-3.2,-3.9
+work_tour,@(purpose=='work').astype(float),0,0.5,0.5,0.7,0.3,0.3,0.4,0.4,0.3
+nonmandatory_tour,@(tour_category=='nonmandatory').astype(float),0,0.3,0.2,0.2,0.1,0.0,0.0,0.0,0.0
+joint_tour,@(tour_category=='joint').astype(float),0,0.4,0.3,0.3,0.1,0.0,0.0,0.0,0.0

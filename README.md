@@ -87,7 +87,8 @@ src/sbcabm/
   longterm/         auto ownership, work & school location, transit pass, telecommute
   activitygen/      household-interaction CDAP, tour frequency, joint tours,
                     destination choice, discrete time-of-day choice
-  modechoice/       tour mode choice (nested logit) + trip-list generation
+  modechoice/       tour & trip mode choice (nested logit), stop frequency
+                    & purpose, trip-list generation
   # forthcoming: assignment/ (MATSim-style network loading)
 tests/              unit tests + fixtures
 ```
