@@ -70,3 +70,10 @@ pipeline:
 # Demand↔supply equilibrium loop settings.
 equilibrium:
   iterations: 3
+
+# MATSim-style co-evolutionary replanning (alternative supply loop; run
+# explicitly with `sbcabm run --stages replanning` after the main pipeline).
+replanning:
+  iterations: 4
+  replan_share: 0.3
+  memory_size: 3
