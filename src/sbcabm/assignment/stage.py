@@ -13,6 +13,7 @@ from ..config import Config
 from ..network.graph import Network
 from ..pipeline import DataStore
 from .static import assign_static
+from .summary import network_summary
 
 logger = logging.getLogger("sbcabm.assignment")
 
@@ -30,6 +31,10 @@ def run_assignment(config: Config, store: DataStore) -> None:
     store.put("link_volumes", result.link_volumes)
     store.put("congested_times", result.congested_times)
     store.put("assignment_diagnostics", result.diagnostics)
+    store.put(
+        "network_summary",
+        network_summary(result.link_volumes, result.congested_times, network),
+    )
     logger.info(
         "assignment: %d link-period volumes over %d periods",
         len(result.link_volumes),

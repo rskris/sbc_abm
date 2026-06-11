@@ -24,6 +24,7 @@ from ..network.graph import Network
 from ..pipeline import DataStore
 from ..skims.congested import collapse_to_representative, congested_auto_skims
 from .static import assign_static
+from .summary import network_summary
 
 logger = logging.getLogger("sbcabm.assignment.equilibrium")
 
@@ -56,6 +57,10 @@ def run_equilibrium(config: Config, store: DataStore) -> None:
         store.put("link_volumes", result.link_volumes)
         store.put("congested_times", result.congested_times)
         store.put("assignment_diagnostics", result.diagnostics)
+        store.put(
+            "network_summary",
+            network_summary(result.link_volumes, result.congested_times, network),
+        )
 
         current = _auto_time_vector(store.get("skims"))
         rmse = _rmse(previous, current)
