@@ -63,4 +63,9 @@ pipeline:
     - activitygen   # daily activity pattern, tours       (implemented)
     - modechoice    # tour mode (nested logit) + trips    (implemented)
     - assignment    # static BPR network loading (MSA)    (implemented)
+    - equilibrium   # demand↔supply feedback loop          (implemented)
     - measures      # summaries & reports                 (Phase 7)
+
+# Demand↔supply equilibrium loop settings.
+equilibrium:
+  iterations: 3

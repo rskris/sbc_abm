@@ -94,6 +94,7 @@ def build_default_registry() -> StageRegistry:
 
     # Imported lazily to keep optional/heavy deps out of the import path.
     from .activitygen.stage import run_activitygen
+    from .assignment.equilibrium import run_equilibrium
     from .assignment.stage import run_assignment
     from .data.ingest import run_ingest
     from .longterm.stage import run_longterm
@@ -171,6 +172,13 @@ def build_default_registry() -> StageRegistry:
             name="assignment",
             fn=run_assignment,
             description="Static BPR assignment of auto trips (MSA to equilibrium).",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="equilibrium",
+            fn=run_equilibrium,
+            description="Demand↔supply loop: modechoice → assignment → congested skims.",
         )
     )
     return registry
