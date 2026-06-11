@@ -40,8 +40,8 @@ def test_popsyn_stage_runs_from_fixtures(tmp_path):
 def test_unimplemented_stage_is_skipped():
     config = load_config(CONFIG)
     pipeline = build_pipeline(config)
-    # 'assignment' is planned, not implemented — running it must not error.
-    store = pipeline.run(["assignment"])
+    # 'measures' is planned, not implemented — running it must not error.
+    store = pipeline.run(["measures"])
     assert store.names() == []
 
 

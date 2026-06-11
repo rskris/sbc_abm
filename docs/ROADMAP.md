@@ -96,11 +96,14 @@ in place. Remaining items are live-data validation.
   be consistent with the tour mode (nested logit on the trip's own LOS).
 - ✅ `modechoice` pipeline stage → moded `tours` + a `trips` table.
 
-## Phase 6 — Assignment & equilibrium ⬜
-- ⬜ Static volume-delay (BPR) assignment for fast iterations.
-- ⬜ MATSim-style dynamic mobsim with per-agent scoring + co-evolutionary
-  re-planning.
-- ⬜ Demand↔supply feedback loop to skim equilibrium; convergence diagnostics.
+## Phase 6 — Assignment & equilibrium 🚧
+- ✅ Static volume-delay (BPR) assignment: MSA-averaged all-or-nothing loading
+  by time period, link volumes + congested times, convergence diagnostics
+  (story 6.1).
+- ⬜ Congested skims & demand feedback loop (story 6.2).
+- ⬜ MATSim-style agent plans & scoring (story 6.3).
+- ⬜ Co-evolutionary re-planning (story 6.4).
+- ⬜ Per-period capacities & convergence diagnostics rollup (story 6.5).
 
 ## Phase 7 — Calibration, validation, reporting ⬜
 - ⬜ Calibrate to NHTS/CHTS targets and SBCAG validation data.

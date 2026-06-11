@@ -94,6 +94,7 @@ def build_default_registry() -> StageRegistry:
 
     # Imported lazily to keep optional/heavy deps out of the import path.
     from .activitygen.stage import run_activitygen
+    from .assignment.stage import run_assignment
     from .data.ingest import run_ingest
     from .longterm.stage import run_longterm
     from .modechoice.stage import run_modechoice
@@ -163,6 +164,13 @@ def build_default_registry() -> StageRegistry:
             name="modechoice",
             fn=run_modechoice,
             description="Tour mode choice (nested logit) and trip-list generation.",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="assignment",
+            fn=run_assignment,
+            description="Static BPR assignment of auto trips (MSA to equilibrium).",
         )
     )
     return registry

@@ -93,7 +93,7 @@ src/sbcabm/
                     destination choice, discrete time-of-day choice
   modechoice/       tour & trip mode choice (nested logit), stop frequency
                     & purpose, trip-list generation
-  # forthcoming: assignment/ (MATSim-style network loading)
+  assignment/       static BPR assignment (MSA); mobsim/replanning forthcoming
 tests/              unit tests + fixtures
 ```
 

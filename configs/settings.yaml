@@ -62,5 +62,5 @@ pipeline:
     - longterm      # auto ownership + workplace location (implemented)
     - activitygen   # daily activity pattern, tours       (implemented)
     - modechoice    # tour mode (nested logit) + trips    (implemented)
-    - assignment    # network loading + skim feedback     (Phase 6)
+    - assignment    # static BPR network loading (MSA)    (implemented)
     - measures      # summaries & reports                 (Phase 7)

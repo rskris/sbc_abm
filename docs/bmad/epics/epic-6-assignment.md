@@ -1,27 +1,20 @@
 # Epic 6 — Assignment & equilibrium
 
-**Status: Draft** · Delivers FR10.
+**Status: InProgress** (story 6.1 done) · Delivers FR10.
 Goal: load the trip list onto the network, produce congested travel times and
 link volumes, and iterate demand↔supply to equilibrium — closing the loop that
 makes the model a *system*, not a one-way pipeline.
 
 ## Stories
 
-### 6.1 Static BPR assignment — Approved (next up)
-*As a* modeler *I want* auto trips assigned to network links with volume-delay
-feedback *so that* congested link times and volumes exist.
-**Acceptance criteria**
-1. `assignment/static.py` assigns period-grouped auto trips to shortest paths
-   and updates link times with the BPR function
-   `t = t0 · (1 + α(v/c)^β)` (defaults α=0.15, β=4; capacities derived from
-   link class/lanes with documented defaults).
-2. Iterative loading (MSA — method of successive averages) converges: max
-   relative link-time change < tolerance or max iterations; convergence
-   diagnostics returned.
-3. Produces `link_volumes` (per link, per period) and `congested_times`.
-4. Offline stage test: fixture trips load, volumes are conserved (sum of
-   assigned trips = auto trips), congested time ≥ free-flow time.
-Full sharded story: [`../stories/6.1.static-bpr-assignment.md`](../stories/6.1.static-bpr-assignment.md).
+### 6.1 Static BPR assignment — Done
+Period-grouped auto trips assigned by MSA-averaged all-or-nothing shortest
+paths with BPR volume-delay (α=0.15, β=4; documented lane/capacity defaults;
+per-mode occupancy divisor). Produces `link_volumes`, `congested_times`,
+`assignment_diagnostics`; deterministic; conservation, monotonicity,
+convergence, and stage integration all asserted.
+*Evidence:* `src/sbcabm/assignment/{static,stage}.py`; `tests/test_assignment.py`.
+Story file: [`../stories/6.1.static-bpr-assignment.md`](../stories/6.1.static-bpr-assignment.md).
 
 ### 6.2 Congested skims & demand feedback — Draft
 *As a* modeler *I want* congested times fed back into skims and the demand
