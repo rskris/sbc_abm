@@ -3,6 +3,10 @@
 A staged plan to grow SBC ABM from the current foundation to a full,
 production-usable model. Each phase produces something runnable and testable.
 
+> Phases map 1:1 onto **BMAD epics** — requirements, stories and acceptance
+> criteria live under [`docs/bmad/`](bmad/README.md). This file remains the
+> quick status view.
+
 Legend: ✅ done · 🚧 in progress · ⬜ planned
 
 ## Phase 0 — Foundation ✅

@@ -16,10 +16,14 @@ The whole model is bootstrapped from **public data** (US Census/ACS & PUMS,
 LEHD/LODES, TIGER/Line, OpenStreetMap, GTFS) — see
 [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
 
-> **Status:** early development. Data ingestion (Census ACS/PUMS), the zone
-> system, and the population-synthesis core (`ingest → zones → popsyn`) are
-> implemented and tested end-to-end; remaining pipeline stages are scaffolded
-> with a documented roadmap. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Status:** the full demand pipeline (ingest → zones → networks/skims →
+> population synthesis → long-term choices → daily activities → mode & trips)
+> is implemented and tested end-to-end; network assignment and calibration are
+> next. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+>
+> Development follows the **BMAD-Method**: brief → PRD → architecture → epics →
+> stories. Start at [`docs/bmad/`](docs/bmad/README.md); the next dev-ready
+> story is [`6.1 — static BPR assignment`](docs/bmad/stories/6.1.static-bpr-assignment.md).
 
 ## What an ABM does
 
