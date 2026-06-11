@@ -53,25 +53,40 @@ public data ─▶ zones ─▶ synthetic population ─▶ long-term choices
 ## Quick start
 
 ```bash
-# Install the package (editable) with dev tooling
-pip install -e ".[dev]"
+# Install the package (editable). Add geo,osm extras for polygons & live OSM.
+pip install -e ".[dev]"            # or ".[dev,geo,osm]" for the full stack
 
 # Run the test suite
 pytest
 
-# Inspect the configuration and pipeline stages
+# Inspect the resolved config and pipeline stages
 sbcabm info
 
-# Run the implemented pipeline: ingest public data, build zones, synthesize
-# a population (falls back to bundled fixtures when offline).
-sbcabm run --stages ingest,zones,popsyn --config configs/settings.yaml
+# Run the FULL pipeline end-to-end (falls back to bundled fixtures offline):
+#   ingest → zones → network → skims → transit_skims → popsyn → longterm
+#   → activitygen → modechoice → assignment → equilibrium → plans → measures
+sbcabm run --write --config configs/settings.yaml
+
+# MATSim-style co-evolutionary replanning (run explicitly after a full run)
+sbcabm run --stages replanning
 ```
 
-> Live data ingestion (Census API, TIGER, OSM, GTFS) requires outbound network
-> access. Where the network is restricted, the pipeline runs against the small
-> fixtures in `tests/fixtures/` so the mechanics can be exercised offline.
+### Running on real Santa Barbara County data
 
-## Repository layout
+```bash
+# 1) Check the environment can reach the public-data hosts AND that the
+#    ACS/PUMS variable scheme exists for the configured vintage:
+sbcabm -c configs/live.yaml preflight     # must report PASS
+
+# 2) Run live (strict mode: a failed required ingest aborts, never fixtures):
+sbcabm -c configs/live.yaml run --write
+```
+
+> Live ingestion (Census API, TIGER, OSM, GTFS) needs outbound network access to
+> the hosts in [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md). Where the network
+> is restricted, every stage falls back to the small fixtures in
+> `tests/fixtures/` so the mechanics run offline. Full procedure:
+> [`docs/bmad/stories/7.5.live-data-run.md`](docs/bmad/stories/7.5.live-data-run.md).
 
 ```
 configs/            run configuration (YAML)
