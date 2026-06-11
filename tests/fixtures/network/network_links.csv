@@ -1,0 +1,4 @@
+from_node,to_node,length_mi,speed_mph,allow_drive,allow_walk,allow_bike,oneway
+A,B,0.6,30,True,True,True,False
+B,C,0.7,30,True,True,True,False
+C,D,0.6,25,True,True,True,False

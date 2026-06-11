@@ -1,0 +1,6 @@
+label,expression,mandatory,nonmandatory,home
+asc,@1,-0.5,0,-0.3
+has_workplace,@has_workplace.astype(float),2.5,0,0
+school_age_child,@((AGEP>=5)&(AGEP<=17)).astype(float),2.5,0,0
+preschool_child,@(AGEP<5).astype(float),0,0,1.5
+senior,@(AGEP>=65).astype(float),0,0.3,0.5

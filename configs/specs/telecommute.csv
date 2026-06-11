@@ -1,0 +1,4 @@
+label,expression,tc_none,tc_some,tc_frequent
+asc,@1,0,-0.8,-1.6
+income_per_100k,@HINCP/100000,0,0.5,0.9
+prime_age,@((AGEP>=30)&(AGEP<=55)).astype(float),0,0.3,0.3

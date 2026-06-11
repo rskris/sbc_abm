@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sbcabm"
+version = "0.1.0"
+description = "An activity-based travel demand model for Santa Barbara County, CA"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "SBC ABM contributors" }]
+keywords = ["travel-demand", "activity-based-model", "transportation-planning", "santa-barbara"]
+
+# Core runtime dependencies. The data-ingestion and assignment layers add
+# optional extras (see below) so the popsyn/demand core stays lightweight.
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "scipy>=1.10",
+    "pyyaml>=6.0",
+    "requests>=2.28",
+    "networkx>=3.0",
+]
+
+[project.optional-dependencies]
+# Geospatial stack — zones, polygon geometry, accessibility.
+geo = [
+    "geopandas>=0.14",
+    "shapely>=2.0",
+    "pyproj>=3.5",
+]
+# Live OpenStreetMap network ingestion (skims work without it via fixtures/tables).
+osm = [
+    "osmnx>=1.9",
+]
+# Developer tooling.
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.5",
+    "mypy>=1.8",
+]
+
+[project.scripts]
+sbcabm = "sbcabm.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+# B007: loop indices in ipf/balancer are intentionally reported after the loop.
+ignore = ["B007"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+packages = ["sbcabm"]

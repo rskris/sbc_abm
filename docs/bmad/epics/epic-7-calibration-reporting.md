@@ -1,0 +1,46 @@
+# Epic 7 — Calibration, validation & reporting
+
+**Status: Done** (7.5 blocked on OD2) · Delivers FR11.
+Goal: make outputs defensible (match observed data) and consumable (standard
+measures and scenario comparisons).
+
+## Stories
+
+### 7.1 Measures stage — Done
+Tidy (measure, segment, value) table: trips, trips/person, tour & trip mode
+shares, person-auto VMT, transit boardings, average travel time by purpose,
+and per-period network VMT/VHT; internal-consistency tests.
+*Evidence:* `src/sbcabm/measures/{measures,stage}.py`; `tests/test_measures.py`.
+
+### 7.2 Validation targets & gap report — Done (OD1 resolved)
+Targets CSV (measure, segment, observed, source); gap report with difference
+and percent deviation, unmatched targets kept visible. **OD1 resolution:**
+primary targets auto-built from county ACS (B08301 commute modes → 
+`mode_share_commute`; B08201 vehicles → `auto_ownership_share`, both added as
+model measures) fetched during ingest; secondary NHTS 2017 rate targets curated
+in `configs/validation/nhts2017_targets.csv`; both merged in the measures
+stage, and the validation ACS variables are covered by `sbcabm preflight`.
+*Evidence:* `src/sbcabm/measures/{validation,targets}.py`;
+`tests/test_measures.py`, `tests/test_validation_targets.py`.
+
+### 7.3 Calibration harness — Done
+Damped iterative ASC adjustment (base-anchored log-ratio for all alternatives)
+against any share simulator; converges below 1% on the auto-ownership spec;
+calibrated specs written alongside originals, never overwriting them.
+*Evidence:* `src/sbcabm/measures/calibration.py`; `tests/test_measures.py`.
+
+### 7.4 Scenario tooling & comparison report — Done
+`compare_measures` (outer-join deltas + percent) and `run_and_compare` over two
+configs; identical runs produce zero deltas (deterministic given seeds).
+*Evidence:* `src/sbcabm/measures/scenario.py`; `tests/test_measures.py`.
+
+### 7.5 Live-data validation run — Ready (code done; awaiting environment)
+All tooling delivered: `sbcabm preflight` (host reachability via the source
+registry + live verification that the ACS/PUMS variable scheme exists for the
+vintage), `data.strict` mode (live runs abort rather than silently fall back to
+fixtures), live GTFS download with `gtfs_path` override, `configs/live.yaml`,
+and the step-by-step runbook. Remaining: execute in a network-enabled
+environment (OD2) and publish diagnostics.
+*Evidence:* `src/sbcabm/data/preflight.py`, `configs/live.yaml`,
+[`../stories/7.5.live-data-run.md`](../stories/7.5.live-data-run.md);
+`tests/test_preflight.py`.

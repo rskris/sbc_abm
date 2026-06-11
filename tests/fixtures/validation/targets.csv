@@ -1,0 +1,6 @@
+measure,segment,observed,source
+mode_share_trip,drive_alone,0.35,illustrative NHTS-style target
+mode_share_trip,walk,0.15,illustrative NHTS-style target
+trips_per_person,all,4.0,illustrative survey rate
+transit_boardings,all,15,illustrative ridership count
+nonexistent_measure,all,1.0,deliberately unmatched target
