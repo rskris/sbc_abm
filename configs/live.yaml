@@ -52,7 +52,7 @@ replanning:
   memory_size: 3
 
 validation:
-  targets_path: null               # point at observed targets when available (OD1)
+  targets_path: "validation/nhts2017_targets.csv"  # + auto-built ACS targets (OD1)
 
 pipeline:
   stages:

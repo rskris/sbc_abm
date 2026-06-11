@@ -108,13 +108,15 @@ in place. Remaining items are live-data validation.
 ## Phase 7 — Calibration, validation, reporting ✅ (tooling)
 - ✅ `measures` stage: trips, mode shares, VMT, boardings, travel times,
   network VMT/VHT — tidy long form (7.1).
-- ✅ Validation targets CSV + model-vs-observed gap report (7.2).
+- ✅ Validation targets CSV + model-vs-observed gap report (7.2); **OD1
+  resolved** — auto-built ACS county targets (commute modes, vehicles) merged
+  with curated NHTS 2017 rates; gap report runs by default.
 - ✅ ASC calibration harness (damped log-ratio, base-anchored; never overwrites
   estimated specs) (7.3).
 - ✅ Scenario comparison: base-vs-scenario measure deltas (7.4).
 - 🚧 Live-data validation run for SB County — **code ready** (`sbcabm
   preflight`, strict mode, `configs/live.yaml`, runbook); awaiting a
-  network-enabled environment (PRD OD2). Targets remain OD1.
+  network-enabled environment (PRD OD2).
 
 ## Cross-cutting
 - ⬜ Performance: vectorized choice evaluation, chunking, optional Polars/Arrow.

@@ -31,9 +31,11 @@ def _blocked_getter(url):
 
 def _full_metadata(url):
     """Fake Census metadata containing every variable the specs need."""
+    from sbcabm.measures.targets import VALIDATION_ACS_VARIABLES
+
     variables = dict.fromkeys(
-        [*acs_variables(all_control_specs()), "SERIALNO", "NP", "HINCP",
-         "WGTP", "SPORDER", "AGEP", "PWGTP"],
+        [*acs_variables(all_control_specs()), *VALIDATION_ACS_VARIABLES,
+         "SERIALNO", "NP", "HINCP", "WGTP", "SPORDER", "AGEP", "PWGTP"],
         {},
     )
     return {"variables": variables}

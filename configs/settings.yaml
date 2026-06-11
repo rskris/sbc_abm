@@ -81,4 +81,4 @@ replanning:
 # Validation: point at a targets CSV (measure, segment, observed, source) to
 # get a model-vs-observed gap report from the measures stage.
 validation:
-  targets_path: null  # e.g. data/validation/targets.csv
+  targets_path: "validation/nhts2017_targets.csv"

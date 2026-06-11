@@ -32,6 +32,7 @@ def compute_measures(
     trips: pd.DataFrame,
     skims: pd.DataFrame,
     *,
+    households: pd.DataFrame | None = None,
     transit_skims: pd.DataFrame | None = None,
     network_summary: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
@@ -44,13 +45,22 @@ def compute_measures(
     if len(persons):
         rows.append(("trips_per_person", "all", len(trips) / len(persons)))
 
+    commute = trips[trips["purpose"] == "work"] if "purpose" in trips.columns else trips.iloc[0:0]
     for measure, frame, col in (
         ("mode_share_trip", trips, "mode"),
         ("mode_share_tour", tours, "tour_mode"),
+        ("mode_share_commute", commute, "mode"),
     ):
         if col in frame.columns and len(frame):
             shares = frame[col].value_counts(normalize=True)
             rows.extend((measure, mode, float(share)) for mode, share in shares.items())
+
+    if households is not None and "auto_ownership" in households.columns and len(households):
+        shares = households["auto_ownership"].value_counts(normalize=True)
+        rows.extend(
+            ("auto_ownership_share", category, float(share))
+            for category, share in shares.items()
+        )
 
     dist = {
         (o, d): v

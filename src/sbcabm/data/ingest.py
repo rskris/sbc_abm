@@ -44,7 +44,7 @@ from .tiger import (
 logger = logging.getLogger("sbcabm.data.ingest")
 
 _REQUIRED_OUTPUTS = ("acs_block_groups", "pums_households", "pums_persons")
-_OPTIONAL_OUTPUTS = ("lodes_wac", "gazetteer", "block_group_geometries")
+_OPTIONAL_OUTPUTS = ("acs_validation", "lodes_wac", "gazetteer", "block_group_geometries")
 _SERIALNO = "SERIALNO"
 _DOWNLOAD_TIMEOUT = 60
 
@@ -92,9 +92,21 @@ def _ingest_from_census(config: Config, store: DataStore, specs) -> None:
     )
 
     # Best-effort enrichment sources: a failure here is non-fatal.
+    _try_optional(store, "acs_validation", lambda: _fetch_acs_validation(config, client))
     _try_optional(store, "lodes_wac", lambda: _fetch_lodes(config))
     _try_optional(store, "gazetteer", lambda: _fetch_gazetteer(config))
     _try_optional(store, "block_group_geometries", lambda: _fetch_tiger(config))
+
+
+def _fetch_acs_validation(config: Config, client: CensusClient) -> pd.DataFrame:
+    """County-level ACS pull for validation targets (commute modes, vehicles)."""
+    from ..measures.targets import VALIDATION_ACS_VARIABLES
+
+    return client.fetch_acs(
+        list(VALIDATION_ACS_VARIABLES),
+        for_clause=f"county:{config.region.county_fips}",
+        in_clause=f"state:{config.region.state_fips}",
+    )
 
 
 def _split_pums(pums: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:

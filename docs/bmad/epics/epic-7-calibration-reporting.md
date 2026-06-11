@@ -12,12 +12,16 @@ shares, person-auto VMT, transit boardings, average travel time by purpose,
 and per-period network VMT/VHT; internal-consistency tests.
 *Evidence:* `src/sbcabm/measures/{measures,stage}.py`; `tests/test_measures.py`.
 
-### 7.2 Validation targets & gap report — Done
+### 7.2 Validation targets & gap report — Done (OD1 resolved)
 Targets CSV (measure, segment, observed, source); gap report with difference
-and percent deviation, unmatched targets kept visible; wired to the measures
-stage via `validation.targets_path`. Real target *data* remains OD1.
-*Evidence:* `src/sbcabm/measures/validation.py`; `tests/test_measures.py`,
-`tests/fixtures/validation/targets.csv`.
+and percent deviation, unmatched targets kept visible. **OD1 resolution:**
+primary targets auto-built from county ACS (B08301 commute modes → 
+`mode_share_commute`; B08201 vehicles → `auto_ownership_share`, both added as
+model measures) fetched during ingest; secondary NHTS 2017 rate targets curated
+in `configs/validation/nhts2017_targets.csv`; both merged in the measures
+stage, and the validation ACS variables are covered by `sbcabm preflight`.
+*Evidence:* `src/sbcabm/measures/{validation,targets}.py`;
+`tests/test_measures.py`, `tests/test_validation_targets.py`.
 
 ### 7.3 Calibration harness — Done
 Damped iterative ASC adjustment (base-anchored log-ratio for all alternatives)

@@ -56,9 +56,18 @@ Derived from [`project-brief.md`](project-brief.md).
 
 Epic details and stories: [`epics/`](epics/).
 
-## Open product decisions
+## Product decisions
 
-- OD1: Validation targets for Phase 7 (NHTS vs CHTS vs SBCAG counts) — needs
-  owner input on data availability.
-- OD2: Real-data run environment (network-enabled) for live Census/OSM/GTFS
-  ingestion — blocked on environment policy, not code.
+- **OD1 — Validation targets: RESOLVED (2026-06).** Primary: **ACS county
+  data** (B08301 commute mode shares, B08201 household vehicles) — same public
+  API the model ingests from, county-specific, fetched automatically during
+  ingest and turned into targets by `measures/targets.py`. Secondary:
+  **NHTS 2017 published rates** curated in
+  `configs/validation/nhts2017_targets.csv` (replace with CA add-on values
+  when extracted). Rejected: CHTS (2010–12 vintage, restricted access) and
+  SBCAG counts (no public feed; deferred to link-level validation under a
+  data-sharing agreement).
+- **OD2 — Live-run environment: pending owner action.** All code is ready
+  (preflight, strict mode, runbook, `configs/live.yaml`); the environment's
+  network policy must allow the five public-data hosts, then story 7.5
+  executes in a fresh session.

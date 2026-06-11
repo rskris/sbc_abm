@@ -77,10 +77,12 @@ def verify_acs_scheme(
     acs_known = set(acs_meta.get("variables", {}))
     pums_known = set(pums_meta.get("variables", {}))
 
-    rows = [
-        ("acs", var, var in acs_known)
-        for var in acs_variables(all_control_specs())
-    ]
+    from ..measures.targets import VALIDATION_ACS_VARIABLES
+
+    needed_acs = list(
+        dict.fromkeys([*acs_variables(all_control_specs()), *VALIDATION_ACS_VARIABLES])
+    )
+    rows = [("acs", var, var in acs_known) for var in needed_acs]
     pums_vars = dict.fromkeys((*PUMS_HOUSEHOLD_VARIABLES, *PUMS_PERSON_VARIABLES))
     rows += [("pums", var, var in pums_known) for var in pums_vars]
 

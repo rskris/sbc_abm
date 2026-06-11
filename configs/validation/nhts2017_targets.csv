@@ -1,0 +1,7 @@
+measure,segment,observed,source
+trips_per_person,all,3.4,"NHTS 2017 national summary (daily person trips per person); replace with CA add-on value when extracted"
+mode_share_trip,drive_alone,0.45,"NHTS 2017 national person-trip mode shares (approx.); replace with CA add-on values"
+mode_share_trip,shared_ride,0.37,"NHTS 2017 national person-trip mode shares (approx.); replace with CA add-on values"
+mode_share_trip,walk_transit,0.025,"NHTS 2017 national person-trip mode shares (approx.); replace with CA add-on values"
+mode_share_trip,walk,0.105,"NHTS 2017 national person-trip mode shares (approx.); replace with CA add-on values"
+mode_share_trip,bike,0.01,"NHTS 2017 national person-trip mode shares (approx.); replace with CA add-on values"
