@@ -43,6 +43,11 @@ class DataConfig:
     tiger_year: int = 2022
     census_api_key: str | None = None
     allow_network: bool = True
+    # Live runs set strict=True: a failed required ingest aborts the run
+    # instead of silently degrading to bundled fixtures.
+    strict: bool = False
+    # Optional local GTFS feed (dir or .zip); overrides download/fixtures.
+    gtfs_path: str | None = None
 
 
 @dataclass(frozen=True)
@@ -104,6 +109,8 @@ class Config:
                 tiger_year=data_cfg.tiger_year,
                 census_api_key=os.environ["CENSUS_API_KEY"],
                 allow_network=data_cfg.allow_network,
+                strict=data_cfg.strict,
+                gtfs_path=data_cfg.gtfs_path,
             )
 
         zones = ZonesConfig(**data.get("zones", {}))

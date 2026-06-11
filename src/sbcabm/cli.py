@@ -1,8 +1,9 @@
 """Command-line interface: ``sbcabm``.
 
 Subcommands:
-    info   show the resolved configuration and available pipeline stages
-    run    run the pipeline (all configured stages, or a subset via --stages)
+    info       show the resolved configuration and available pipeline stages
+    run        run the pipeline (all configured stages, or a subset via --stages)
+    preflight  verify live-data readiness: host reachability + variable scheme
 """
 
 from __future__ import annotations
@@ -63,6 +64,21 @@ def _cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_preflight(args: argparse.Namespace) -> int:
+    from .data.preflight import run_preflight
+
+    config = load_config(args.config)
+    report, ok = run_preflight(config)
+    failures = report[~report["reachable"]]
+    print(report.to_string(index=False))
+    print(f"\npreflight: {'PASS' if ok else 'FAIL'}"
+          f" ({len(failures)} of {len(report)} checks failing)")
+    if not ok and len(failures):
+        print("Blocked hosts must be added to this environment's network "
+              "allowlist before a live run (see docs/bmad/stories/7.5).")
+    return 0 if ok else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="sbcabm", description=__doc__)
     parser.add_argument("-v", "--verbose", action="store_true", help="debug logging")
@@ -82,6 +98,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--write", action="store_true", help="write data-store tables to the output dir"
     )
     p_run.set_defaults(func=_cmd_run)
+
+    p_pre = sub.add_parser("preflight", help="verify live-data readiness")
+    p_pre.set_defaults(func=_cmd_preflight)
     return parser
 
 

@@ -104,7 +104,7 @@ SOURCES: dict[str, DataSource] = {
     "gtfs_sbmtd": DataSource(
         key="gtfs_sbmtd",
         name="GTFS — Santa Barbara MTD",
-        host="api.sbmtd.gov",
+        host="www.sbmtd.gov",
         url_template="https://www.sbmtd.gov/google_transit/google_transit.zip",
         geography="county",
         license="published by SBMTD",

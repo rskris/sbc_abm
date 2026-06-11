@@ -30,8 +30,13 @@ calibrated specs written alongside originals, never overwriting them.
 configs; identical runs produce zero deltas (deterministic given seeds).
 *Evidence:* `src/sbcabm/measures/scenario.py`; `tests/test_measures.py`.
 
-### 7.5 Live-data validation run — Draft
-**AC:** documented, reproducible real-data run for SB County in a
-network-enabled environment (ingest → measures), with the ACS/PUMS variable
-scheme verified against the live API and popsyn diagnostics published.
-*Blocked on PRD OD2 (environment network policy).*
+### 7.5 Live-data validation run — Ready (code done; awaiting environment)
+All tooling delivered: `sbcabm preflight` (host reachability via the source
+registry + live verification that the ACS/PUMS variable scheme exists for the
+vintage), `data.strict` mode (live runs abort rather than silently fall back to
+fixtures), live GTFS download with `gtfs_path` override, `configs/live.yaml`,
+and the step-by-step runbook. Remaining: execute in a network-enabled
+environment (OD2) and publish diagnostics.
+*Evidence:* `src/sbcabm/data/preflight.py`, `configs/live.yaml`,
+[`../stories/7.5.live-data-run.md`](../stories/7.5.live-data-run.md);
+`tests/test_preflight.py`.

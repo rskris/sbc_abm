@@ -112,8 +112,9 @@ in place. Remaining items are live-data validation.
 - ✅ ASC calibration harness (damped log-ratio, base-anchored; never overwrites
   estimated specs) (7.3).
 - ✅ Scenario comparison: base-vs-scenario measure deltas (7.4).
-- ⬜ Live-data validation run for SB County — blocked on a network-enabled
-  environment (PRD OD2) and target-data choice (OD1).
+- 🚧 Live-data validation run for SB County — **code ready** (`sbcabm
+  preflight`, strict mode, `configs/live.yaml`, runbook); awaiting a
+  network-enabled environment (PRD OD2). Targets remain OD1.
 
 ## Cross-cutting
 - ⬜ Performance: vectorized choice evaluation, chunking, optional Polars/Arrow.

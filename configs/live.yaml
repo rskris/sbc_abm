@@ -1,0 +1,71 @@
+# SBC ABM — LIVE-DATA run configuration (story 7.5).
+#
+# Identical model to configs/settings.yaml, but configured for a real Santa
+# Barbara County run in a network-enabled environment:
+#   * data.strict: a failed required ingest ABORTS the run — no silent fixture
+#     fallback masking a half-live run;
+#   * caches under data/cache so re-runs are download-free.
+#
+# Procedure: docs/bmad/stories/7.5.live-data-run.md
+#   sbcabm -c configs/live.yaml preflight     # must PASS before running
+#   sbcabm -c configs/live.yaml run --write
+
+region:
+  name: "Santa Barbara County"
+  state_fips: "06"
+  county_fips: "083"
+  working_crs: "EPSG:2229"
+  geographic_crs: "EPSG:4326"
+
+random_seed: 42
+
+paths:
+  cache_dir: "data/cache"
+  output_dir: "outputs/live"
+  fixtures_dir: "tests/fixtures"   # unused when strict ingest succeeds
+
+data:
+  acs_year: 2022
+  pums_year: 2022
+  tiger_year: 2022
+  census_api_key: null             # or set CENSUS_API_KEY for higher rate limits
+  allow_network: true
+  strict: true                     # live run: fail loudly, never fixtures
+  gtfs_path: null                  # optional local feed; else SBMTD download
+
+zones:
+  system: "block_group"
+  custom_taz_path: null
+
+popsyn:
+  max_iterations: 2000
+  convergence_tolerance: 1.0e-4
+  household_controls: [total_households, households_by_size, households_by_income]
+  person_controls: [total_persons, persons_by_age, persons_by_sex]
+
+equilibrium:
+  iterations: 3
+
+replanning:
+  iterations: 4
+  replan_share: 0.3
+  memory_size: 3
+
+validation:
+  targets_path: null               # point at observed targets when available (OD1)
+
+pipeline:
+  stages:
+    - ingest
+    - zones
+    - network
+    - skims
+    - transit_skims
+    - popsyn
+    - longterm
+    - activitygen
+    - modechoice
+    - assignment
+    - equilibrium
+    - plans
+    - measures

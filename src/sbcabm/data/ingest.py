@@ -54,6 +54,11 @@ def run_ingest(config: Config, store: DataStore) -> None:
     try:
         _ingest_from_census(config, store, specs)
     except Exception as exc:  # noqa: BLE001 — any failure → documented fixture fallback
+        if config.data.strict:
+            raise RuntimeError(
+                "census ingest failed and data.strict is set (live run); "
+                f"refusing fixture fallback: {exc}"
+            ) from exc
         logger.warning("census ingest unavailable (%s); loading fixtures", exc)
         _ingest_from_fixtures(config, store)
 

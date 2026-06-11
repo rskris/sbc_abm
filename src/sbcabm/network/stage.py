@@ -22,6 +22,42 @@ from .graph import Network
 
 logger = logging.getLogger("sbcabm.network")
 
+_GTFS_TIMEOUT = 60
+
+
+def _resolve_gtfs_source(config: Config) -> Path | None:
+    """Pick the GTFS feed: explicit path > live download (cached) > fixtures."""
+    if config.data.gtfs_path:
+        return Path(config.data.gtfs_path)
+    if config.data.allow_network:
+        downloaded = _download_gtfs(config)
+        if downloaded is not None:
+            return downloaded
+    fixtures = Path(config.paths.fixtures_dir) / "gtfs"
+    return fixtures if fixtures.exists() else None
+
+
+def _download_gtfs(config: Config) -> Path | None:
+    """Fetch the SBMTD feed into the cache (best-effort)."""
+    import requests
+
+    from ..data.sources import get_source
+
+    url = get_source("gtfs_sbmtd").url()
+    cache = Path(config.paths.cache_dir) / "gtfs" / "sbmtd.zip"
+    if cache.exists():
+        return cache
+    try:
+        response = requests.get(url, timeout=_GTFS_TIMEOUT)
+        response.raise_for_status()
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        cache.write_bytes(response.content)
+        logger.info("downloaded GTFS feed to %s", cache)
+        return cache
+    except Exception as exc:  # noqa: BLE001 — optional enrichment
+        logger.warning("GTFS download failed (%s)", exc)
+        return None
+
 
 def run_network(config: Config, store: DataStore) -> None:
     nodes, links = _build_network(config)
@@ -46,6 +82,11 @@ def _build_network(config: Config) -> tuple[pd.DataFrame, pd.DataFrame]:
             place = f"{config.region.name}, California, USA"
             return from_osm(place=place)
         except Exception as exc:  # noqa: BLE001 — fall back to fixtures
+            if config.data.strict:
+                raise RuntimeError(
+                    "OSM network build failed and data.strict is set (live run); "
+                    f"refusing fixture fallback: {exc}"
+                ) from exc
             logger.warning("OSM network build failed (%s); loading fixtures", exc)
     return _network_fixtures(config)
 
@@ -62,11 +103,11 @@ def _network_fixtures(config: Config) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def _ingest_transit(config: Config, store: DataStore) -> None:
-    base = Path(config.paths.fixtures_dir) / "gtfs"
-    if not base.exists():
+    source = _resolve_gtfs_source(config)
+    if source is None:
         return
     try:
-        gtfs = load_gtfs(base)
+        gtfs = load_gtfs(source)
     except Exception as exc:  # noqa: BLE001 — transit is optional enrichment
         logger.warning("GTFS ingest failed (%s); skipping transit", exc)
         return

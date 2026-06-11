@@ -44,5 +44,6 @@ Ingestion requires outbound HTTPS to the hosts above (e.g. `api.census.gov`,
 `www2.census.gov`, Geofabrik, agency GTFS URLs). In restricted environments
 those hosts may be blocked; in that case the pipeline falls back to the
 fixtures under `tests/fixtures/` so the model mechanics remain exercisable
-offline. Run ingestion in an environment whose network policy allows these
-hosts to populate `data/cache/` for a real run.
+offline (live configs set `data.strict: true` to forbid this fallback). Run
+`sbcabm preflight` to check the current environment, and see
+`docs/bmad/stories/7.5.live-data-run.md` for the live-run procedure.
