@@ -96,19 +96,24 @@ in place. Remaining items are live-data validation.
   be consistent with the tour mode (nested logit on the trip's own LOS).
 - ✅ `modechoice` pipeline stage → moded `tours` + a `trips` table.
 
-## Phase 6 — Assignment & equilibrium 🚧
-- ✅ Static volume-delay (BPR) assignment: MSA-averaged all-or-nothing loading
-  by time period, link volumes + congested times, convergence diagnostics
-  (story 6.1).
-- ⬜ Congested skims & demand feedback loop (story 6.2).
-- ⬜ MATSim-style agent plans & scoring (story 6.3).
-- ⬜ Co-evolutionary re-planning (story 6.4).
-- ⬜ Per-period capacities & convergence diagnostics rollup (story 6.5).
+## Phase 6 — Assignment & equilibrium ✅
+- ✅ Static volume-delay (BPR) assignment with MSA, by time period (6.1).
+- ✅ Congested auto skims + demand↔supply `equilibrium` loop with skim-RMSE
+  convergence history (6.2).
+- ✅ Agent day plans + Charypar–Nagel scoring, `plans` stage (6.3).
+- ✅ MATSim-style co-evolutionary `replanning` stage: strategy memories,
+  best-score selection, TOD/mode innovation (6.4).
+- ✅ Measures-ready `network_summary` (per-period VMT/VHT/speed/congestion) (6.5).
 
-## Phase 7 — Calibration, validation, reporting ⬜
-- ⬜ Calibrate to NHTS/CHTS targets and SBCAG validation data.
-- ⬜ Standard measures: VMT, mode share, transit ridership, accessibility, equity.
-- ⬜ Scenario tooling (land use, pricing, transit service) + reporting notebooks.
+## Phase 7 — Calibration, validation, reporting ✅ (tooling)
+- ✅ `measures` stage: trips, mode shares, VMT, boardings, travel times,
+  network VMT/VHT — tidy long form (7.1).
+- ✅ Validation targets CSV + model-vs-observed gap report (7.2).
+- ✅ ASC calibration harness (damped log-ratio, base-anchored; never overwrites
+  estimated specs) (7.3).
+- ✅ Scenario comparison: base-vs-scenario measure deltas (7.4).
+- ⬜ Live-data validation run for SB County — blocked on a network-enabled
+  environment (PRD OD2) and target-data choice (OD1).
 
 ## Cross-cutting
 - ⬜ Performance: vectorized choice evaluation, chunking, optional Polars/Arrow.

@@ -16,14 +16,16 @@ The whole model is bootstrapped from **public data** (US Census/ACS & PUMS,
 LEHD/LODES, TIGER/Line, OpenStreetMap, GTFS) — see
 [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md).
 
-> **Status:** the full demand pipeline (ingest → zones → networks/skims →
-> population synthesis → long-term choices → daily activities → mode & trips)
-> is implemented and tested end-to-end; network assignment and calibration are
-> next. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+> **Status:** the full pipeline is implemented and tested end-to-end — from
+> public-data ingestion through population synthesis, daily activity & mode
+> choice, BPR assignment with a demand↔supply equilibrium loop, MATSim-style
+> co-evolutionary replanning, and standard measures with validation/calibration
+> tooling. Remaining: a live-data run in a network-enabled environment and
+> coefficient calibration against observed targets. See
+> [`docs/ROADMAP.md`](docs/ROADMAP.md).
 >
 > Development follows the **BMAD-Method**: brief → PRD → architecture → epics →
-> stories. Start at [`docs/bmad/`](docs/bmad/README.md); the next dev-ready
-> story is [`6.1 — static BPR assignment`](docs/bmad/stories/6.1.static-bpr-assignment.md).
+> stories — start at [`docs/bmad/`](docs/bmad/README.md).
 
 ## What an ABM does
 
@@ -93,7 +95,10 @@ src/sbcabm/
                     destination choice, discrete time-of-day choice
   modechoice/       tour & trip mode choice (nested logit), stop frequency
                     & purpose, trip-list generation
-  assignment/       static BPR assignment (MSA); mobsim/replanning forthcoming
+  assignment/       static BPR assignment (MSA), equilibrium loop, agent
+                    plans & scoring, co-evolutionary replanning, summaries
+  measures/         standard measures, validation gaps, ASC calibration,
+                    scenario comparison
 tests/              unit tests + fixtures
 ```
 

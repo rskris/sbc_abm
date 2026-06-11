@@ -65,7 +65,7 @@ pipeline:
     - assignment    # static BPR network loading (MSA)    (implemented)
     - equilibrium   # demand↔supply feedback loop          (implemented)
     - plans         # agent day plans + scoring            (implemented)
-    - measures      # summaries & reports                 (Phase 7)
+    - measures      # summaries + validation gaps         (implemented)
 
 # Demand↔supply equilibrium loop settings.
 equilibrium:
@@ -77,3 +77,8 @@ replanning:
   iterations: 4
   replan_share: 0.3
   memory_size: 3
+
+# Validation: point at a targets CSV (measure, segment, observed, source) to
+# get a model-vs-observed gap report from the measures stage.
+validation:
+  targets_path: null  # e.g. data/validation/targets.csv

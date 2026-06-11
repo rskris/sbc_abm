@@ -51,8 +51,8 @@ Derived from [`project-brief.md`](project-brief.md).
 | 3 | Long-term & mobility choices + discrete-choice engine | **Done** |
 | 4 | Daily activities & tours | **Done** |
 | 5 | Mode & trips | **Done** |
-| 6 | Assignment & equilibrium | Draft |
-| 7 | Calibration, validation & reporting | Draft |
+| 6 | Assignment & equilibrium | **Done** |
+| 7 | Calibration, validation & reporting | **Done** (7.5 blocked on OD2) |
 
 Epic details and stories: [`epics/`](epics/).
 

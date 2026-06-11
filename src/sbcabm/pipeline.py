@@ -100,6 +100,7 @@ def build_default_registry() -> StageRegistry:
     from .assignment.stage import run_assignment
     from .data.ingest import run_ingest
     from .longterm.stage import run_longterm
+    from .measures.stage import run_measures
     from .modechoice.stage import run_modechoice
     from .network.stage import run_network
     from .popsyn.stage import run_popsyn
@@ -195,6 +196,13 @@ def build_default_registry() -> StageRegistry:
             name="replanning",
             fn=run_replanning,
             description="MATSim-style co-evolutionary replanning (run explicitly).",
+        )
+    )
+    registry.register(
+        FunctionStage(
+            name="measures",
+            fn=run_measures,
+            description="Standard run measures + validation gap report.",
         )
     )
     return registry
